@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Científica</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+    <div class="brand-icon">Σ</div>
+
+    <div>
+      <h1>Calculadora Científica</h1>
+      <span>Matemática de forma simples</span>
+    </div>
+  </div>
+
+  <div class="theme-controls">
+    <button id="themeButton" class="theme-toggle">☾</button>
+
+    <select id="themeSelect">
+      <option value="default">Padrão</option>
+      <option value="lego">LEGO</option>
+      <option value="dragonball">Goku</option>
+      <option value="superman">Superman</option>
+      <option value="batman">Batman</option>
+      <option value="spiderman">Homem-Aranha</option>
+      <option value="ironman">Homem de Ferro</option>
+    </select>
+  </div>
+
+</header>
+
+
+<nav class="tabs">
+
+  <button class="tab-button active" data-page="calculator">
+    Calculadora
+  </button>
+
+  <button class="tab-button" data-page="scientific">
+    Científica
+  </button>
+
+  <button class="tab-button" data-page="functions">
+    Funções
+  </button>
+
+  <button class="tab-button" data-page="matrices">
+    Matrizes
+  </button>
+
+  <button class="tab-button" data-page="combinatorics">
+    Combinatória
+  </button>
+
+  <button class="tab-button" data-page="boolean">
+    Lógica Booleana
+  </button>
+
+  <button class="tab-button" data-page="exercises">
+    Exercícios
+  </button>
+
+</nav>
+
+
+<main>
+
+
+  <!-- =====================================================
+       CALCULADORA
+       ===================================================== -->
+
+  <section id="calculator" class="page active-page">
+
+    <div class="calculator-layout">
+
+      <div class="calculator-card">
+
+        <div class="display">
+          <div id="previousOperation" class="previous-operation"></div>
+          <div id="currentOperation" class="current-operation">0</div>
+        </div>
+
+        <div id="calculatorMessage" class="calculator-message"></div>
+
+        <div class="calculator-keyboard">
+
+          <button class="calc-button action-button" data-action="clear">C</button>
+          <button class="calc-button action-button" data-action="sign">±</button>
+          <button class="calc-button action-button" data-action="percentage">%</button>
+          <button class="calc-button operation-button" data-operation="/">÷</button>
+
+          <button class="calc-button" data-number="7">7</button>
+          <button class="calc-button" data-number="8">8</button>
+          <button class="calc-button" data-number="9">9</button>
+          <button class="calc-button operation-button" data-operation="*">×</button>
+
+          <button class="calc-button" data-number="4">4</button>
+          <button class="calc-button" data-number="5">5</button>
+          <button class="calc-button" data-number="6">6</button>
+          <button class="calc-button operation-button" data-operation="-">−</button>
+
+          <button class="calc-button" data-number="1">1</button>
+          <button class="calc-button" data-number="2">2</button>
+          <button class="calc-button" data-number="3">3</button>
+          <button class="calc-button operation-button" data-operation="+">+</button>
+
+          <button class="calc-button action-button" data-action="parenthesis">( )</button>
+          <button class="calc-button zero-button" data-number="0">0</button>
+          <button class="calc-button" data-number=".">.</button>
+          <button class="calc-button equal-button" data-action="calculate">=</button>
+
+          <button class="calc-button backspace-button" data-action="delete">⌫</button>
+
+        </div>
+
+      </div>
+
+
+      <aside class="side-panel">
+
+        <div class="panel-card">
+
+          <div class="panel-title">
+            <h2>Histórico</h2>
+            <button id="clearHistory">Limpar</button>
+          </div>
+
+          <div id="historyList" class="history-list">
+            <p class="empty-message">Nenhum cálculo ainda.</p>
+          </div>
+
+        </div>
+
+
+        <div class="learning-card">
+
+          <div class="learning-icon">?</div>
+
+          <div>
+            <h3>Aprenda praticando</h3>
+            <p>Resolva exercícios e acompanhe seu aprendizado.</p>
+          </div>
+
+          <button id="openExercises" class="panel-button">
+            Ver exercícios
+          </button>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       CIENTÍFICA
+       ===================================================== -->
+
+  <section id="scientific" class="page">
+
+    <div class="scientific-calculator">
+
+      <div class="scientific-display">
+        <div id="scientificPrevious" class="scientific-previous"></div>
+        <div id="scientificCurrent" class="scientific-current">0</div>
+      </div>
+
+      <div id="scientificMessage" class="scientific-message"></div>
+
+
+      <div class="scientific-function-row">
+
+        <button class="calc-button scientific-button" data-scientific="sin">sin</button>
+        <button class="calc-button scientific-button" data-scientific="cos">cos</button>
+        <button class="calc-button scientific-button" data-scientific="tan">tan</button>
+        <button class="calc-button scientific-button" data-scientific="sqrt">√</button>
+        <button class="calc-button scientific-button" data-scientific="square">x²</button>
+        <button class="calc-button scientific-button" data-scientific="power">xʸ</button>
+
+        <button class="calc-button scientific-button" data-scientific="log">log</button>
+        <button class="calc-button scientific-button" data-scientific="ln">ln</button>
+        <button class="calc-button scientific-button" data-scientific="pi">π</button>
+        <button class="calc-button scientific-button" data-scientific="e">e</button>
+        <button class="calc-button scientific-button" data-scientific="factorial">n!</button>
+        <button class="calc-button scientific-button" data-scientific="random">RAND</button>
+
+      </div>
+
+
+      <div class="scientific-number-keyboard">
+
+        <button class="calc-button action-button" data-scientific-action="clear">C</button>
+        <button class="calc-button action-button" data-scientific-action="sign">±</button>
+        <button class="calc-button action-button" data-scientific-action="delete">⌫</button>
+        <button class="calc-button scientific-button" data-scientific-operation="/">÷</button>
+
+        <button class="calc-button" data-scientific-number="7">7</button>
+        <button class="calc-button" data-scientific-number="8">8</button>
+        <button class="calc-button" data-scientific-number="9">9</button>
+        <button class="calc-button scientific-button" data-scientific-operation="*">×</button>
+
+        <button class="calc-button" data-scientific-number="4">4</button>
+        <button class="calc-button" data-scientific-number="5">5</button>
+        <button class="calc-button" data-scientific-number="6">6</button>
+        <button class="calc-button scientific-button" data-scientific-operation="-">−</button>
+
+        <button class="calc-button" data-scientific-number="1">1</button>
+        <button class="calc-button" data-scientific-number="2">2</button>
+        <button class="calc-button" data-scientific-number="3">3</button>
+        <button class="calc-button scientific-button" data-scientific-operation="+">+</button>
+
+        <button class="calc-button" data-scientific-number="0">0</button>
+        <button class="calc-button" data-scientific-number=".">.</button>
+        <button class="calc-button scientific-button" data-scientific="percentage">%</button>
+        <button class="calc-button equal-button" data-scientific-action="calculate">=</button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       FUNÇÕES
+       ===================================================== -->
+
+  <section id="functions" class="page">
+
+    <div class="module-card">
+
+      <div class="module-header">
+        <div>
+          <h2>Funções f(x)</h2>
+          <p>Calcule valores e gere uma tabela para uma função.</p>
+        </div>
+      </div>
+
+      <div id="functionMessage" class="module-message"></div>
+
+      <div class="function-form">
+
+        <label>
+          Expressão f(x)
+          <input id="functionInput" type="text" placeholder="Ex: x^2 - 4">
+        </label>
+
+        <div class="form-row">
+
+          <label>
+            Início
+            <input id="functionStart" type="number" value="-2">
+          </label>
+
+          <label>
+            Fim
+            <input id="functionEnd" type="number" value="2">
+          </label>
+
+          <label>
+            Passo
+            <input id="functionStep" type="number" value="1">
+          </label>
+
+        </div>
+
+        <button id="calculateFunction" class="panel-button">
+          Calcular função
+        </button>
+
+      </div>
+
+      <div id="functionTable" class="function-table"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       MATRIZES
+       ===================================================== -->
+
+  <section id="matrices" class="page">
+
+    <div class="module-card">
+
+      <div class="module-header">
+        <div>
+          <h2>Matrizes</h2>
+          <p>Operações com matrizes quadradas.</p>
+        </div>
+      </div>
+
+      <div id="matrixMessage" class="module-message"></div>
+
+      <div class="matrix-controls">
+
+        <label>
+          Ordem
+          <select id="matrixSize">
+            <option value="2">2 × 2</option>
+            <option value="3">3 × 3</option>
+          </select>
+        </label>
+
+        <label>
+          Operação
+          <select id="matrixOperation">
+            <option value="add">A + B</option>
+            <option value="subtract">A − B</option>
+            <option value="multiply">A × B</option>
+            <option value="scalar">k × A</option>
+            <option value="detA">det(A)</option>
+            <option value="detB">det(B)</option>
+            <option value="transposeA">Transposta de A</option>
+            <option value="transposeB">Transposta de B</option>
+          </select>
+        </label>
+
+        <label id="scalarContainer">
+          Escalar k
+          <input id="matrixScalar" type="number" value="2">
+        </label>
+
+      </div>
+
+
+      <div class="matrices-wrapper">
+
+        <div>
+          <h3>Matriz A</h3>
+          <div id="matrixAInputs" class="matrix-grid"></div>
+        </div>
+
+        <div>
+          <h3>Matriz B</h3>
+          <div id="matrixBInputs" class="matrix-grid"></div>
+        </div>
+
+      </div>
+
+      <button id="calculateMatrix" class="panel-button">
+        Calcular matriz
+      </button>
+
+      <div id="matrixResult" class="matrix-result"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       COMBINATÓRIA
+       ===================================================== -->
+
+  <section id="combinatorics" class="page">
+
+    <div class="module-card">
+
+      <div class="module-header">
+        <div>
+          <h2>Análise Combinatória</h2>
+          <p>Fatorial, combinação, permutação e arranjo.</p>
+        </div>
+      </div>
+
+      <div id="combinatoricsMessage" class="module-message"></div>
+
+      <div class="combinatorics-form">
+
+        <label>
+          Operação
+
+          <select id="combinatoricsOperation">
+
+            <option value="combination">
+              Combinação C(n,k)
+            </option>
+
+            <option value="permutation">
+              Permutação P(n,k)
+            </option>
+
+            <option value="arrangement">
+              Arranjo A(n,k)
+            </option>
+
+            <option value="repeatedPermutation">
+              Permutação com repetição
+            </option>
+
+            <option value="factorial">
+              Fatorial n!
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <div id="normalCombinatoricsInputs">
+
+          <div class="form-row">
+
+            <label>
+              n
+              <input id="combinatoricsN" type="number" min="0" step="1" value="5">
+            </label>
+
+            <label>
+              k
+              <input id="combinatoricsK" type="number" min="0" step="1" value="3">
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <div id="repeatedCombinatoricsInputs" class="hidden">
+
+          <label>
+            Total de elementos n
+            <input id="repeatedN" type="number" min="0" step="1" value="4">
+          </label>
+
+          <label>
+            Repetições
+            <input id="repeatedValues" type="text" placeholder="Ex: 2,2">
+          </label>
+
+          <small>
+            Exemplo: AABC → n = 4 e repetições = 2,2.
+          </small>
+
+        </div>
+
+
+        <button id="calculateCombinatorics" class="panel-button">
+          Calcular
+        </button>
+
+      </div>
+
+
+      <div id="combinatoricsResult" class="result-box"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       LÓGICA BOOLEANA
+       ===================================================== -->
+
+  <section id="boolean" class="page">
+
+    <div class="module-card">
+
+      <div class="module-header">
+        <div>
+          <h2>Lógica Booleana</h2>
+          <p>Tabelas-verdade, simplificação e circuitos lógicos.</p>
+        </div>
+      </div>
+
+
+      <div class="boolean-tabs">
+
+        <button class="boolean-tab active" data-boolean-section="truth">
+          Tabela-verdade
+        </button>
+
+        <button class="boolean-tab" data-boolean-section="simplify">
+          Simplificação
+        </button>
+
+        <button class="boolean-tab" data-boolean-section="circuit">
+          Circuitos
+        </button>
+
+      </div>
+
+
+      <!-- TABELA VERDADE -->
+
+      <div id="booleanTruth" class="boolean-section">
+
+        <label>
+          Expressão booleana
+
+          <input
+            id="booleanExpression"
+            type="text"
+            placeholder="Ex: (A AND B) OR NOT C"
+          >
+        </label>
+
+        <p class="help-text">
+          Use AND, OR, NOT, XOR, NAND e NOR. Variáveis podem ser A, B, C e D.
+        </p>
+
+        <button id="generateTruthTable" class="panel-button">
+          Gerar tabela-verdade
+        </button>
+
+        <div id="truthTableResult" class="boolean-result"></div>
+
+      </div>
+
+
+      <!-- SIMPLIFICAÇÃO -->
+
+      <div id="booleanSimplify" class="boolean-section hidden">
+
+        <label>
+          Expressão booleana
+
+          <input
+            id="simplifyExpression"
+            type="text"
+            placeholder="Ex: (A AND B) OR (A AND NOT B)"
+          >
+        </label>
+
+        <p class="help-text">
+          A simplificação é calculada a partir da tabela-verdade da expressão.
+        </p>
+
+        <button id="simplifyBoolean" class="panel-button">
+          Simplificar
+        </button>
+
+        <div id="simplifyResult" class="boolean-result"></div>
+
+      </div>
+
+
+      <!-- CIRCUITO -->
+
+      <div id="booleanCircuit" class="boolean-section hidden">
+
+        <div class="form-row">
+
+          <label>
+            Entrada A
+
+            <select id="circuitA">
+              <option value="0">0 — Falso</option>
+              <option value="1">1 — Verdadeiro</option>
+            </select>
+
+          </label>
+
+
+          <label>
+            Entrada B
+
+            <select id="circuitB">
+              <option value="0">0 — Falso</option>
+              <option value="1">1 — Verdadeiro</option>
+            </select>
+
+          </label>
+
+        </div>
+
+
+        <label>
+          Porta lógica
+
+          <select id="circuitOperation">
+
+            <option value="AND">AND</option>
+            <option value="OR">OR</option>
+            <option value="XOR">XOR</option>
+            <option value="NAND">NAND</option>
+            <option value="NOR">NOR</option>
+
+          </select>
+
+        </label>
+
+
+        <button id="calculateCircuit" class="panel-button">
+          Executar circuito
+        </button>
+
+
+        <div id="circuitResult" class="circuit-result">
+
+          <div class="circuit-node input-node">
+            A
+            <strong id="circuitAValue">0</strong>
+          </div>
+
+          <div class="circuit-wire"></div>
+
+          <div class="logic-gate">
+            <span id="gateName">AND</span>
+          </div>
+
+          <div class="circuit-wire"></div>
+
+          <div class="circuit-node output-node">
+            Saída
+            <strong id="circuitOutput">0</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       EXERCÍCIOS
+       ===================================================== -->
+
+  <section id="exercises" class="page">
+
+    <div class="exercises-container">
+
+      <div class="exercise-header">
+
+        <h2>Exercícios</h2>
+
+        <p>
+          Pratique os principais conceitos de matemática.
+        </p>
+
+      </div>
+
+
+      <div class="exercise-categories">
+
+        <button class="exercise-category-title active" data-category="all">
+          Todos
+        </button>
+
+        <button class="exercise-category-title" data-category="basic">
+          Básico
+        </button>
+
+        <button class="exercise-category-title" data-category="algebra">
+          Álgebra
+        </button>
+
+        <button class="exercise-category-title" data-category="percentage">
+          Porcentagem
+        </button>
+
+        <button class="exercise-category-title" data-category="trigonometry">
+          Trigonometria
+        </button>
+
+        <button class="exercise-category-title random-exercise-button" id="randomExercise">
+          Aleatório
+        </button>
+
+      </div>
+
+
+      <div id="exerciseViewer" class="exercise-viewer"></div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
