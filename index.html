@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora Científica</title>
+  <title>MathLab</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -12,26 +12,12 @@
 <header class="topbar">
 
   <div class="brand">
-    <div class="brand-icon">Σ</div>
+    <img class="brand-logo" src="img/mathlab-logo.jpg" alt="Logo MathLab">
 
     <div>
-      <h1>Calculadora Científica</h1>
+      <h1>MathLab</h1>
       <span>Matemática de forma simples</span>
     </div>
-  </div>
-
-  <div class="theme-controls">
-    <button id="themeButton" class="theme-toggle">☾</button>
-
-    <select id="themeSelect">
-      <option value="default">Padrão</option>
-      <option value="lego">LEGO</option>
-      <option value="dragonball">Goku</option>
-      <option value="superman">Superman</option>
-      <option value="batman">Batman</option>
-      <option value="spiderman">Homem-Aranha</option>
-      <option value="ironman">Homem de Ferro</option>
-    </select>
   </div>
 
 </header>
@@ -59,12 +45,8 @@
     Combinatória
   </button>
 
-  <button class="tab-button" data-page="boolean">
-    Lógica Booleana
-  </button>
-
-  <button class="tab-button" data-page="exercises">
-    Exercícios
+  <button class="tab-button" data-page="probability">
+    Probabilidade
   </button>
 
 </nav>
@@ -93,31 +75,31 @@
         <div class="calculator-keyboard">
 
           <button class="calc-button action-button" data-action="clear">C</button>
-          <button class="calc-button action-button" data-action="sign">±</button>
+          <button class="calc-button action-button" data-action="clear-entry">CE</button>
+          <button class="calc-button action-button" data-action="delete">⌫</button>
           <button class="calc-button action-button" data-action="percentage">%</button>
           <button class="calc-button operation-button" data-operation="/">÷</button>
 
           <button class="calc-button" data-number="7">7</button>
           <button class="calc-button" data-number="8">8</button>
           <button class="calc-button" data-number="9">9</button>
+          <button class="calc-button action-button" data-action="parenthesis">( )</button>
           <button class="calc-button operation-button" data-operation="*">×</button>
 
           <button class="calc-button" data-number="4">4</button>
           <button class="calc-button" data-number="5">5</button>
           <button class="calc-button" data-number="6">6</button>
+          <button class="calc-button action-button" data-action="sign">±</button>
           <button class="calc-button operation-button" data-operation="-">−</button>
 
           <button class="calc-button" data-number="1">1</button>
           <button class="calc-button" data-number="2">2</button>
           <button class="calc-button" data-number="3">3</button>
+          <button class="calc-button zero-button" data-number="0">0</button>
           <button class="calc-button operation-button" data-operation="+">+</button>
 
-          <button class="calc-button action-button" data-action="parenthesis">( )</button>
-          <button class="calc-button zero-button" data-number="0">0</button>
           <button class="calc-button" data-number=".">.</button>
-          <button class="calc-button equal-button" data-action="calculate">=</button>
-
-          <button class="calc-button backspace-button" data-action="delete">⌫</button>
+          <button class="calc-button equal-button wide-equal-button" data-action="calculate">=</button>
 
         </div>
 
@@ -139,21 +121,6 @@
 
         </div>
 
-
-        <div class="learning-card">
-
-          <div class="learning-icon">?</div>
-
-          <div>
-            <h3>Aprenda praticando</h3>
-            <p>Resolva exercícios e acompanhe seu aprendizado.</p>
-          </div>
-
-          <button id="openExercises" class="panel-button">
-            Ver exercícios
-          </button>
-
-        </div>
 
       </aside>
 
@@ -200,29 +167,32 @@
       <div class="scientific-number-keyboard">
 
         <button class="calc-button action-button" data-scientific-action="clear">C</button>
-        <button class="calc-button action-button" data-scientific-action="sign">±</button>
+        <button class="calc-button action-button" data-scientific-action="clear-entry">CE</button>
         <button class="calc-button action-button" data-scientific-action="delete">⌫</button>
+        <button class="calc-button scientific-button" data-scientific="percentage">%</button>
         <button class="calc-button scientific-button" data-scientific-operation="/">÷</button>
 
         <button class="calc-button" data-scientific-number="7">7</button>
         <button class="calc-button" data-scientific-number="8">8</button>
         <button class="calc-button" data-scientific-number="9">9</button>
+        <button class="calc-button scientific-button" data-scientific="pi">π</button>
         <button class="calc-button scientific-button" data-scientific-operation="*">×</button>
 
         <button class="calc-button" data-scientific-number="4">4</button>
         <button class="calc-button" data-scientific-number="5">5</button>
         <button class="calc-button" data-scientific-number="6">6</button>
+        <button class="calc-button scientific-button" data-scientific="e">e</button>
         <button class="calc-button scientific-button" data-scientific-operation="-">−</button>
 
         <button class="calc-button" data-scientific-number="1">1</button>
         <button class="calc-button" data-scientific-number="2">2</button>
         <button class="calc-button" data-scientific-number="3">3</button>
+        <button class="calc-button action-button" data-scientific-action="sign">±</button>
         <button class="calc-button scientific-button" data-scientific-operation="+">+</button>
 
         <button class="calc-button" data-scientific-number="0">0</button>
         <button class="calc-button" data-scientific-number=".">.</button>
-        <button class="calc-button scientific-button" data-scientific="percentage">%</button>
-        <button class="calc-button equal-button" data-scientific-action="calculate">=</button>
+        <button class="calc-button equal-button scientific-equal-button" data-scientific-action="calculate">=</button>
 
       </div>
 
@@ -306,13 +276,29 @@
 
       <div class="matrix-controls">
 
-        <label>
-          Ordem
-          <select id="matrixSize">
-            <option value="2">2 × 2</option>
-            <option value="3">3 × 3</option>
-          </select>
-        </label>
+        <fieldset class="matrix-dimension-group">
+          <legend>Matriz A</legend>
+          <label>
+            Linhas
+            <input id="matrixARows" type="number" min="1" max="6" step="1" value="2">
+          </label>
+          <label>
+            Colunas
+            <input id="matrixACols" type="number" min="1" max="6" step="1" value="2">
+          </label>
+        </fieldset>
+
+        <fieldset class="matrix-dimension-group">
+          <legend>Matriz B</legend>
+          <label>
+            Linhas
+            <input id="matrixBRows" type="number" min="1" max="6" step="1" value="2">
+          </label>
+          <label>
+            Colunas
+            <input id="matrixBCols" type="number" min="1" max="6" step="1" value="2">
+          </label>
+        </fieldset>
 
         <label>
           Operação
@@ -325,6 +311,8 @@
             <option value="detB">det(B)</option>
             <option value="transposeA">Transposta de A</option>
             <option value="transposeB">Transposta de B</option>
+            <option value="inverseA">Inversa de A</option>
+            <option value="inverseB">Inversa de B</option>
           </select>
         </label>
 
@@ -463,221 +451,87 @@
 
 
   <!-- =====================================================
-       LÓGICA BOOLEANA
+       PROBABILIDADE
        ===================================================== -->
 
-  <section id="boolean" class="page">
+  <section id="probability" class="page">
 
-    <div class="module-card">
+    <div class="module-card probability-module">
 
       <div class="module-header">
         <div>
-          <h2>Lógica Booleana</h2>
-          <p>Tabelas-verdade, simplificação e circuitos lógicos.</p>
+          <h2>Probabilidade</h2>
+          <p>Cálculos fundamentais e simulações aleatórias.</p>
         </div>
       </div>
 
-
-      <div class="boolean-tabs">
-
-        <button class="boolean-tab active" data-boolean-section="truth">
-          Tabela-verdade
-        </button>
-
-        <button class="boolean-tab" data-boolean-section="simplify">
-          Simplificação
-        </button>
-
-        <button class="boolean-tab" data-boolean-section="circuit">
-          Circuitos
-        </button>
-
+      <div class="probability-tabs">
+        <button class="probability-tab active" data-probability-section="simple">Simples</button>
+        <button class="probability-tab" data-probability-section="union">União / Interseção</button>
+        <button class="probability-tab" data-probability-section="conditional">Condicional</button>
+        <button class="probability-tab" data-probability-section="binomial">Binomial</button>
+        <button class="probability-tab" data-probability-section="simulation">Simulações</button>
       </div>
 
+      <div id="probabilityMessage" class="module-message"></div>
 
-      <!-- TABELA VERDADE -->
-
-      <div id="booleanTruth" class="boolean-section">
-
-        <label>
-          Expressão booleana
-
-          <input
-            id="booleanExpression"
-            type="text"
-            placeholder="Ex: (A AND B) OR NOT C"
-          >
-        </label>
-
-        <p class="help-text">
-          Use AND, OR, NOT, XOR, NAND e NOR. Variáveis podem ser A, B, C e D.
-        </p>
-
-        <button id="generateTruthTable" class="panel-button">
-          Gerar tabela-verdade
-        </button>
-
-        <div id="truthTableResult" class="boolean-result"></div>
-
-      </div>
-
-
-      <!-- SIMPLIFICAÇÃO -->
-
-      <div id="booleanSimplify" class="boolean-section hidden">
-
-        <label>
-          Expressão booleana
-
-          <input
-            id="simplifyExpression"
-            type="text"
-            placeholder="Ex: (A AND B) OR (A AND NOT B)"
-          >
-        </label>
-
-        <p class="help-text">
-          A simplificação é calculada a partir da tabela-verdade da expressão.
-        </p>
-
-        <button id="simplifyBoolean" class="panel-button">
-          Simplificar
-        </button>
-
-        <div id="simplifyResult" class="boolean-result"></div>
-
-      </div>
-
-
-      <!-- CIRCUITO -->
-
-      <div id="booleanCircuit" class="boolean-section hidden">
-
+      <div id="probabilitySimple" class="probability-section">
+        <h3>Probabilidade simples e complementar</h3>
         <div class="form-row">
-
-          <label>
-            Entrada A
-
-            <select id="circuitA">
-              <option value="0">0 — Falso</option>
-              <option value="1">1 — Verdadeiro</option>
-            </select>
-
-          </label>
-
-
-          <label>
-            Entrada B
-
-            <select id="circuitB">
-              <option value="0">0 — Falso</option>
-              <option value="1">1 — Verdadeiro</option>
-            </select>
-
-          </label>
-
+          <label>Casos favoráveis<input id="probabilityFavorable" type="number" min="0" step="1" value="1"></label>
+          <label>Casos possíveis<input id="probabilityPossible" type="number" min="1" step="1" value="6"></label>
         </div>
+        <button id="calculateSimpleProbability" class="panel-button">Calcular</button>
+        <div id="simpleProbabilityResult" class="result-box"></div>
+      </div>
 
-
-        <label>
-          Porta lógica
-
-          <select id="circuitOperation">
-
-            <option value="AND">AND</option>
-            <option value="OR">OR</option>
-            <option value="XOR">XOR</option>
-            <option value="NAND">NAND</option>
-            <option value="NOR">NOR</option>
-
-          </select>
-
-        </label>
-
-
-        <button id="calculateCircuit" class="panel-button">
-          Executar circuito
-        </button>
-
-
-        <div id="circuitResult" class="circuit-result">
-
-          <div class="circuit-node input-node">
-            A
-            <strong id="circuitAValue">0</strong>
-          </div>
-
-          <div class="circuit-wire"></div>
-
-          <div class="logic-gate">
-            <span id="gateName">AND</span>
-          </div>
-
-          <div class="circuit-wire"></div>
-
-          <div class="circuit-node output-node">
-            Saída
-            <strong id="circuitOutput">0</strong>
-          </div>
-
+      <div id="probabilityUnion" class="probability-section hidden">
+        <h3>União e interseção</h3>
+        <div class="form-row">
+          <label>P(A)<input id="probabilityA" type="number" min="0" max="1" step="any" value="0.5"></label>
+          <label>P(B)<input id="probabilityB" type="number" min="0" max="1" step="any" value="0.4"></label>
+          <label>P(A ∩ B)<input id="probabilityIntersection" type="number" min="0" max="1" step="any" value="0.2"></label>
         </div>
-
+        <button id="calculateUnionProbability" class="panel-button">Calcular união</button>
+        <div id="unionProbabilityResult" class="result-box"></div>
       </div>
 
-    </div>
-
-  </section>
-
-
-  <!-- =====================================================
-       EXERCÍCIOS
-       ===================================================== -->
-
-  <section id="exercises" class="page">
-
-    <div class="exercises-container">
-
-      <div class="exercise-header">
-
-        <h2>Exercícios</h2>
-
-        <p>
-          Pratique os principais conceitos de matemática.
-        </p>
-
+      <div id="probabilityConditional" class="probability-section hidden">
+        <h3>Probabilidade condicional</h3>
+        <div class="form-row">
+          <label>P(A ∩ B)<input id="conditionalIntersection" type="number" min="0" max="1" step="any" value="0.2"></label>
+          <label>P(B)<input id="conditionalB" type="number" min="0" max="1" step="any" value="0.4"></label>
+        </div>
+        <button id="calculateConditionalProbability" class="panel-button">Calcular P(A|B)</button>
+        <div id="conditionalProbabilityResult" class="result-box"></div>
       </div>
 
-
-      <div class="exercise-categories">
-
-        <button class="exercise-category-title active" data-category="all">
-          Todos
-        </button>
-
-        <button class="exercise-category-title" data-category="basic">
-          Básico
-        </button>
-
-        <button class="exercise-category-title" data-category="algebra">
-          Álgebra
-        </button>
-
-        <button class="exercise-category-title" data-category="percentage">
-          Porcentagem
-        </button>
-
-        <button class="exercise-category-title" data-category="trigonometry">
-          Trigonometria
-        </button>
-
-        <button class="exercise-category-title random-exercise-button" id="randomExercise">
-          Aleatório
-        </button>
-
+      <div id="probabilityBinomial" class="probability-section hidden">
+        <h3>Distribuição binomial</h3>
+        <div class="form-row">
+          <label>n<input id="binomialN" type="number" min="0" step="1" value="5"></label>
+          <label>k<input id="binomialK" type="number" min="0" step="1" value="2"></label>
+          <label>p<input id="binomialP" type="number" min="0" max="1" step="any" value="0.5"></label>
+        </div>
+        <button id="calculateBinomialProbability" class="panel-button">Calcular binomial</button>
+        <div id="binomialProbabilityResult" class="result-box"></div>
       </div>
 
-
-      <div id="exerciseViewer" class="exercise-viewer"></div>
+      <div id="probabilitySimulation" class="probability-section hidden">
+        <h3>Simulações</h3>
+        <div class="form-row">
+          <label>Experimento
+            <select id="simulationType">
+              <option value="dice">Dado — observar resultado 6</option>
+              <option value="coin">Moeda — observar cara</option>
+              <option value="card">Carta — observar ás em baralho de 52 cartas</option>
+            </select>
+          </label>
+          <label>Tentativas<input id="simulationTrials" type="number" min="1" max="100000" step="1" value="1000"></label>
+        </div>
+        <button id="runProbabilitySimulation" class="panel-button">Executar simulação</button>
+        <div id="simulationProbabilityResult" class="probability-simulation-result"></div>
+      </div>
 
     </div>
 

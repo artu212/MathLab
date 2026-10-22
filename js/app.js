@@ -32,43 +32,6 @@ tabs.forEach(tab => {
 });
 
 
-/* =========================================================
-   TEMA
-   ========================================================= */
-
-const themeButton = document.getElementById("themeButton");
-const themeSelect = document.getElementById("themeSelect");
-
-themeButton.addEventListener("click", () => {
-
-  document.body.classList.toggle("dark");
-
-  themeButton.textContent =
-    document.body.classList.contains("dark")
-      ? "☀"
-      : "☾";
-
-});
-
-themeSelect.addEventListener("change", () => {
-
-  const themes = [
-    "lego",
-    "dragonball",
-    "superman",
-    "batman",
-    "spiderman",
-    "ironman"
-  ];
-
-  document.body.classList.remove(...themes);
-
-  if (themeSelect.value !== "default") {
-    document.body.classList.add(themeSelect.value);
-  }
-
-});
-
 
 /* =========================================================
    UTILITÁRIOS
@@ -80,7 +43,8 @@ function formatNumber(number) {
     return "Erro";
   }
 
-  return Number(number.toFixed(10)).toString();
+  const rounded = Number(number.toFixed(10));
+  return Object.is(rounded, -0) ? "0" : rounded.toString();
 
 }
 
@@ -147,232 +111,103 @@ function getLastNumber(expr) {
    AVALIADOR DE EXPRESSÕES
    ========================================================= */
 
+/* Parser matemático: não usa eval/new Function e valida toda a expressão.
+   Potência associativa à direita; menos unário após operadores e parênteses. */
 function tokenizeExpression(expr) {
-
+  const source = String(expr).replace(/\s+/g, "").replaceAll("−", "-");
   const tokens = [];
-  let number = "";
-
-  for (let i = 0; i < expr.length; i++) {
-
-    const char = expr[i];
-
-    if (/[0-9.]/.test(char)) {
-
-      number += char;
+  let position = 0;
+  while (position < source.length) {
+    const part = source.slice(position);
+    const number = part.match(/^(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?/);
+    if (number) {
+      const value = Number(number[0]);
+      if (!Number.isFinite(value)) throw new Error("Número fora do intervalo permitido.");
+      tokens.push(value);
+      position += number[0].length;
       continue;
-
     }
-
-    if ("+-*/()".includes(char)) {
-
-      if (number !== "") {
-
-        if ((number.match(/\./g) || []).length > 1) {
-          throw new Error("Número decimal inválido.");
-        }
-
-        tokens.push(Number(number));
-        number = "";
-
-      }
-
-      tokens.push(char);
+    const name = part.match(/^[a-zA-Z]+/);
+    if (name) {
+      tokens.push(name[0].toLowerCase());
+      position += name[0].length;
       continue;
-
     }
-
-    throw new Error("Expressão inválida.");
-
-  }
-
-  if (number !== "") {
-
-    if ((number.match(/\./g) || []).length > 1) {
-      throw new Error("Número decimal inválido.");
+    const character = source[position];
+    if ("+-*/^()".includes(character)) {
+      tokens.push(character);
+      position++;
+      continue;
     }
-
-    tokens.push(Number(number));
-
+    throw new Error("Caractere inválido na expressão.");
   }
-
   return tokens;
-
 }
 
+function evaluateMathExpression(expr, variables = {}) {
+  const tokens = tokenizeExpression(expr);
+  if (!tokens.length) throw new Error("Digite uma expressão.");
+  let index = 0;
+  const constants = { pi: Math.PI, e: Math.E };
+  const functions = {
+    sin: Math.sin, sen: Math.sin, cos: Math.cos, tan: Math.tan,
+    sqrt: Math.sqrt, log: Math.log10, ln: Math.log, abs: Math.abs
+  };
+  const peek = () => tokens[index];
+  const take = () => tokens[index++];
+  function parse(minimum = 0) {
+    let left;
+    const token = take();
+    if (typeof token === "number") {
+      left = token;
+    } else if (token === "+" || token === "-") {
+      const value = parse(3);
+      left = token === "-" ? -value : value;
+    } else if (token === "(") {
+      left = parse(0);
+      if (take() !== ")") throw new Error("Parênteses não fechados.");
+    } else if (typeof token === "string" && /^[a-z]+$/.test(token)) {
+      if (Object.prototype.hasOwnProperty.call(variables, token)) {
+        left = variables[token];
+      } else if (Object.prototype.hasOwnProperty.call(constants, token)) {
+        left = constants[token];
+      } else if (Object.prototype.hasOwnProperty.call(functions, token)) {
+        if (take() !== "(") throw new Error(`Use ${token}(valor).`);
+        const argument = parse(0);
+        if (take() !== ")") throw new Error("Parênteses não fechados.");
+        left = functions[token](argument);
+      } else {
+        throw new Error(`Nome matemático desconhecido: ${token}.`);
+      }
+    } else {
+      throw new Error("Expressão inválida ou incompleta.");
+    }
+    while (true) {
+      const operator = peek();
+      const precedence = { "+": 1, "-": 1, "*": 2, "/": 2, "^": 4 }[operator];
+      if (precedence === undefined || precedence < minimum) break;
+      take();
+      const right = parse(operator === "^" ? precedence : precedence + 1);
+      if (operator === "+") left += right;
+      if (operator === "-") left -= right;
+      if (operator === "*") left *= right;
+      if (operator === "/") {
+        if (right === 0) throw new Error("Não é possível dividir por zero.");
+        left /= right;
+      }
+      if (operator === "^") left = Math.pow(left, right);
+      if (!Number.isFinite(left)) throw new Error("Resultado fora do domínio real ou do intervalo permitido.");
+    }
+    return left;
+  }
+  const result = parse();
+  if (index !== tokens.length) throw new Error("Expressão inválida: confira os operadores.");
+  if (!Number.isFinite(result)) throw new Error("Resultado fora do domínio real.");
+  return result;
+}
 
 function evaluateExpression(expr) {
-
-  if (!expr) {
-    throw new Error("Digite uma expressão.");
-  }
-
-  let tokens = tokenizeExpression(expr);
-
-  if (!tokens.length) {
-    throw new Error("Expressão vazia.");
-  }
-
-  if (tokens[0] === "-") {
-
-    if (
-      tokens.length > 1 &&
-      typeof tokens[1] === "number"
-    ) {
-
-      tokens[1] = -tokens[1];
-      tokens.shift();
-
-    } else {
-
-      throw new Error("Expressão inválida.");
-
-    }
-
-  }
-
-  const values = [];
-  const operators = [];
-
-  const precedence = {
-    "+":1,
-    "-":1,
-    "*":2,
-    "/":2
-  };
-
-
-  function applyOperation() {
-
-    const operator = operators.pop();
-
-    const b = values.pop();
-    const a = values.pop();
-
-    if (
-      typeof a !== "number" ||
-      typeof b !== "number"
-    ) {
-      throw new Error("Expressão inválida.");
-    }
-
-    let result;
-
-    if (operator === "+") result = a + b;
-    if (operator === "-") result = a - b;
-    if (operator === "*") result = a * b;
-
-    if (operator === "/") {
-
-      if (b === 0) {
-        throw new Error("Não é possível dividir por zero.");
-      }
-
-      result = a / b;
-
-    }
-
-    values.push(result);
-
-  }
-
-
-  let previousToken = null;
-
-  for (const token of tokens) {
-
-    if (typeof token === "number") {
-
-      values.push(token);
-      previousToken = token;
-      continue;
-
-    }
-
-    if (token === "(") {
-
-      operators.push(token);
-      previousToken = token;
-      continue;
-
-    }
-
-    if (token === ")") {
-
-      if (previousToken === "(") {
-        throw new Error("Parênteses vazios.");
-      }
-
-      while (
-        operators.length &&
-        operators[operators.length - 1] !== "("
-        ) {
-        applyOperation();
-      }
-
-      if (
-        !operators.length ||
-        operators[operators.length - 1] !== "("
-      ) {
-        throw new Error("Parênteses inválidos.");
-      }
-
-      operators.pop();
-      previousToken = token;
-      continue;
-
-    }
-
-    if (
-      typeof previousToken !== "number" &&
-      previousToken !== ")"
-    ) {
-
-      throw new Error("Operadores consecutivos.");
-
-    }
-
-    while (
-      operators.length &&
-      operators[operators.length - 1] !== "(" &&
-      precedence[operators[operators.length - 1]] >= precedence[token]
-      ) {
-      applyOperation();
-    }
-
-    operators.push(token);
-    previousToken = token;
-
-  }
-
-  if (
-    typeof previousToken !== "number" &&
-    previousToken !== ")"
-  ) {
-    throw new Error("Expressão incompleta.");
-  }
-
-  while (operators.length) {
-
-    if (operators[operators.length - 1] === "(") {
-      throw new Error("Parênteses não fechados.");
-    }
-
-    applyOperation();
-
-  }
-
-  if (values.length !== 1) {
-    throw new Error("Expressão inválida.");
-  }
-
-  const result = values[0];
-
-  if (!Number.isFinite(result)) {
-    throw new Error("Resultado inválido.");
-  }
-
-  return result;
-
+  return evaluateMathExpression(expr);
 }
 
 
@@ -527,43 +362,36 @@ function addParenthesis() {
 
 
 function toggleSign() {
-
-  if (!expression) {
-
-    currentValue =
-      currentValue.startsWith("-")
-        ? currentValue.slice(1)
-        : "-" + currentValue;
-
+  if (justCalculated) {
     expression = currentValue;
+    justCalculated = false;
+  }
+  const wrapped = expression.match(/\(-((?:\d+(?:\.\d*)?|\.\d+))\)$/);
+  if (wrapped) {
+    expression = expression.slice(0, -wrapped[0].length) + wrapped[1];
     updateDisplay();
     return;
-
   }
-
-  const match =
-    expression.match(/(\d*\.?\d+)$/);
-
-  if (!match) return;
-
-  const number = match[1];
-  const index = match.index;
-  const before = expression.slice(0,index);
-
-  if (before.endsWith("-")) {
-
-    expression =
-      before.slice(0,-1) + number;
-
+  const match = expression.match(/(\d+(?:\.\d*)?|\.\d+)$/);
+  if (!match) {
+    if (!expression) expression = "-";
+    else if (/[+*/(]$/.test(expression)) expression += "-";
+    updateDisplay();
+    return;
+  }
+  const prefix = expression.slice(0, match.index);
+  const number = match[0];
+  if (prefix.endsWith("-")) {
+    const beforeMinus = prefix.slice(0, -1);
+    if (!beforeMinus || /[+*/(\-]$/.test(beforeMinus)) {
+      expression = beforeMinus + number;
+    } else {
+      expression = prefix + "(-" + number + ")";
+    }
   } else {
-
-    expression =
-      before + "-" + number;
-
+    expression = prefix + "(-" + number + ")";
   }
-
   updateDisplay();
-
 }
 
 
@@ -622,6 +450,34 @@ function deleteNumber() {
 
   updateDisplay();
 
+}
+
+
+function clearCurrentEntry() {
+
+  if (justCalculated) {
+    expression = "";
+    currentValue = "0";
+    justCalculated = false;
+    previousOperationDisplay.textContent = "";
+    updateDisplay();
+    return;
+  }
+
+  if (!expression) {
+    currentValue = "0";
+    updateDisplay();
+    return;
+  }
+
+  const match = expression.match(/(-?\d*\.?\d+)$/);
+
+  if (match) {
+    expression = expression.slice(0, match.index);
+    currentValue = "0";
+  }
+
+  updateDisplay();
 }
 
 
@@ -755,6 +611,10 @@ document
 
         case "delete":
           deleteNumber();
+          break;
+
+        case "clear-entry":
+          clearCurrentEntry();
           break;
 
         case "percentage":
@@ -911,29 +771,44 @@ function scientificDelete() {
 }
 
 
-function scientificToggleSign() {
+function scientificClearEntry() {
 
-  const value =
-    scientificExpression || scientificValue;
+  if (scientificJustCalculated) {
+    scientificExpression = "";
+    scientificValue = "0";
+    scientificJustCalculated = false;
+    scientificPrevious.textContent = "";
+    updateScientificDisplay();
+    return;
+  }
 
-  const match =
-    value.match(/(\d*\.?\d+)$/);
+  const value = scientificExpression || scientificValue;
+  const match = value.match(/(-?\d*\.?\d+)$/);
 
-  if (!match) return;
+  if (match) {
+    scientificExpression = value.slice(0, match.index);
+  }
 
-  const index = match.index;
-  const number = match[1];
-  const before = value.slice(0,index);
-
-  scientificExpression =
-    before.endsWith("-")
-      ? before.slice(0,-1) + number
-      : before + "-" + number;
-
-  scientificValue = scientificExpression;
-
+  scientificValue = scientificExpression || "0";
   updateScientificDisplay();
+}
 
+
+function scientificToggleSign() {
+  if (scientificJustCalculated) {
+    scientificExpression = scientificValue;
+    scientificJustCalculated = false;
+  }
+  const wrapped = scientificExpression.match(/\(-((?:\d+(?:\.\d*)?|\.\d+))\)$/);
+  if (wrapped) {
+    scientificExpression = scientificExpression.slice(0, -wrapped[0].length) + wrapped[1];
+  } else {
+    const match = scientificExpression.match(/(\d+(?:\.\d*)?|\.\d+)$/);
+    if (!match) return;
+    scientificExpression = scientificExpression.slice(0, match.index) + "(-" + match[0] + ")";
+  }
+  scientificValue = scientificExpression;
+  updateScientificDisplay();
 }
 
 
@@ -964,6 +839,10 @@ function setScientificResult(value) {
 
 
 function factorialBigInt(n) {
+
+  if (!Number.isSafeInteger(n) || n < 0 || n > 2000) {
+    throw new Error("Fatorial exige inteiro entre 0 e 2000.");
+  }
 
   if (!Number.isInteger(n) || n < 0) {
     throw new Error("Fatorial exige n ≥ 0.");
@@ -1127,35 +1006,13 @@ function scientificOperation(operation) {
 
 
 function calculateScientificPower() {
-
-  const parts =
-    scientificExpression.split("^");
-
-  if (parts.length !== 2) {
-    throw new Error("Potência inválida.");
-  }
-
-  const base = Number(parts[0]);
-  const exponent = Number(parts[1]);
-
-  if (
-    !Number.isFinite(base) ||
-    !Number.isFinite(exponent)
-  ) {
-    throw new Error("Potência inválida.");
-  }
-
-  scientificPrevious.textContent =
-    `${base}^${exponent} =`;
-
-  scientificValue =
-    formatNumber(base ** exponent);
-
+  const original = scientificExpression;
+  const result = evaluateMathExpression(original);
+  scientificPrevious.textContent = `${original} =`;
+  scientificValue = formatNumber(result);
   scientificExpression = "";
   scientificJustCalculated = true;
-
   updateScientificDisplay();
-
 }
 
 
@@ -1228,6 +1085,10 @@ document
           scientificDelete();
           break;
 
+        case "clear-entry":
+          scientificClearEntry();
+          break;
+
         case "sign":
           scientificToggleSign();
           break;
@@ -1274,92 +1135,22 @@ document
    ========================================================= */
 
 function transformFunctionExpression(expression) {
-
-  let result =
-    expression
-      .toLowerCase()
-      .replaceAll(" ","")
-      .replaceAll("−","-")
-      .replaceAll("²","^2")
-      .replaceAll("³","^3");
-
-  result =
-    result.replace(
-      /(\d|\))x/g,
-      "$1*x"
-    );
-
-  result =
-    result.replaceAll("^","**");
-
-  result =
-    result.replaceAll("sen","sin");
-
-  result =
-    result.replaceAll("√","sqrt");
-
-  result =
-    result.replaceAll("pi","PI");
-
-  result =
-    result.replace(
-      /(\d|\))(?=x|\()/g,
-      "$1*"
-    );
-
-  result =
-    result.replace(
-      /x(?=\()/g,
-      "x*"
-    );
-
-  return result;
-
+  return String(expression).toLowerCase().replace(/\s+/g, "")
+    .replaceAll("−", "-").replaceAll("²", "^2").replaceAll("³", "^3")
+    .replaceAll("√", "sqrt").replace(/(\d|\))(?=x|\()/g, "$1*")
+    .replace(/x(?=\()/g, "x*").replace(/\)(?=\()/g, ")*");
 }
 
-
-function evaluateFunction(expression,x) {
-
-  const transformed =
-    transformFunctionExpression(expression);
-
-  if (
-    !/^[0-9x+\-*/().a-zA-Z_*]+$/.test(transformed)
-  ) {
-    throw new Error("Expressão da função inválida.");
+function evaluateFunction(expression, x) {
+  const transformed = transformFunctionExpression(expression);
+  try {
+    return evaluateMathExpression(transformed, { x });
+  } catch (error) {
+    if (/dividir por zero|domínio real|intervalo permitido/.test(error.message)) {
+      throw new Error(`Domínio inválido para x = ${x}.`);
+    }
+    throw error;
   }
-
-  const fn =
-    new Function(
-      "x",
-      `
-        const sin=Math.sin;
-        const cos=Math.cos;
-        const tan=Math.tan;
-        const sqrt=Math.sqrt;
-        const log=Math.log10;
-        const ln=Math.log;
-        const abs=Math.abs;
-        const PI=Math.PI;
-        const E=Math.E;
-
-        return (${transformed});
-      `
-    );
-
-  const result = fn(x);
-
-  if (
-    typeof result !== "number" ||
-    !Number.isFinite(result)
-  ) {
-    throw new Error(
-      `Domínio inválido para x = ${x}.`
-    );
-  }
-
-  return result;
-
 }
 
 
@@ -1398,6 +1189,10 @@ document
       if (!expression)
         throw new Error("Digite uma expressão para f(x).");
 
+      if (["functionStart", "functionEnd", "functionStep"].some(id =>
+        document.getElementById(id).value.trim() === "")) {
+        throw new Error("Preencha o intervalo e o passo.");
+      }
       if (!Number.isFinite(start) || !Number.isFinite(end))
         throw new Error("Intervalo inválido.");
 
@@ -1406,6 +1201,13 @@ document
 
       if (start > end)
         throw new Error("O início deve ser menor ou igual ao fim.");
+
+      const count = Math.floor((end - start) / step + 1e-9) + 1;
+      if (!Number.isFinite(count) || count > 501) {
+        throw new Error("Intervalo muito grande: limite de 501 pontos. Aumente o passo.");
+      }
+      // Valida a sintaxe mesmo que o primeiro ponto esteja fora do domínio.
+      tokenizeExpression(transformFunctionExpression(expression));
 
       let html = `
         <table>
@@ -1420,14 +1222,8 @@ document
 
       let invalid = 0;
 
-      for (
-        let x = start;
-        x <= end + step / 1000;
-        x += step
-      ) {
-
-        const rounded =
-          Number(x.toFixed(10));
+      for (let i = 0; i < count; i++) {
+        const rounded = Number((start + i * step).toFixed(10));
 
         try {
 
@@ -1490,67 +1286,97 @@ document
    MATRIZES
    ========================================================= */
 
-function createMatrixInputs() {
+function matrixDimensions(name) {
 
-  const size =
-    Number(document.getElementById("matrixSize").value);
+  const rows = Number(
+    document.getElementById(`matrix${name}Rows`).value
+  );
 
-  ["A","B"].forEach(matrixName => {
+  const cols = Number(
+    document.getElementById(`matrix${name}Cols`).value
+  );
 
-    const container =
-      document.getElementById(
-        matrixName === "A"
-          ? "matrixAInputs"
-          : "matrixBInputs"
-      );
+  if (
+    !Number.isInteger(rows) ||
+    !Number.isInteger(cols) ||
+    rows < 1 || cols < 1 ||
+    rows > 6 || cols > 6
+  ) {
+    throw new Error("Use dimensões inteiras entre 1 e 6.");
+  }
 
-    container.innerHTML = "";
+  return { rows, cols };
 
-    for(let i=0;i<size;i++) {
+}
 
-      for(let j=0;j<size;j++) {
 
-        const input =
-          document.createElement("input");
+function createSingleMatrixInputs(name) {
 
-        input.type = "number";
-        input.step = "any";
-        input.value = "0";
+  const { rows, cols } = matrixDimensions(name);
 
-        input.dataset.matrix = matrixName;
-        input.dataset.row = i;
-        input.dataset.col = j;
+  const container = document.getElementById(
+    name === "A" ? "matrixAInputs" : "matrixBInputs"
+  );
 
-        container.appendChild(input);
+  container.innerHTML = "";
+  container.style.gridTemplateColumns = `repeat(${cols}, minmax(55px, 1fr))`;
 
-      }
+  for (let i = 0; i < rows; i++) {
+
+    for (let j = 0; j < cols; j++) {
+
+      const input = document.createElement("input");
+
+      input.type = "number";
+      input.step = "any";
+      input.value = "0";
+
+      input.dataset.matrix = name;
+      input.dataset.row = i;
+      input.dataset.col = j;
+
+      container.appendChild(input);
 
     }
 
-  });
+  }
+
+}
+
+
+function createMatrixInputs() {
+
+  createSingleMatrixInputs("A");
+  createSingleMatrixInputs("B");
 
 }
 
 
 function getMatrix(name) {
 
-  const size =
-    Number(document.getElementById("matrixSize").value);
-
+  const { rows, cols } = matrixDimensions(name);
   const matrix = [];
 
-  for(let i=0;i<size;i++) {
+  for (let i = 0; i < rows; i++) {
 
     const row = [];
 
-    for(let j=0;j<size;j++) {
+    for (let j = 0; j < cols; j++) {
 
-      const input =
-        document.querySelector(
-          `[data-matrix="${name}"][data-row="${i}"][data-col="${j}"]`
-        );
+      const input = document.querySelector(
+        `[data-matrix="${name}"][data-row="${i}"][data-col="${j}"]`
+      );
 
-      row.push(Number(input.value));
+      if (!input || input.value.trim() === "") {
+        throw new Error(`Preencha todos os valores da matriz ${name}.`);
+      }
+      const value = Number(input.value);
+
+      if (!Number.isFinite(value)) {
+        throw new Error(`Valor inválido na matriz ${name}.`);
+      }
+
+      row.push(value);
 
     }
 
@@ -1563,57 +1389,78 @@ function getMatrix(name) {
 }
 
 
-function addMatrices(A,B) {
+function sameMatrixDimensions(A, B) {
 
-  return A.map((row,i) =>
-    row.map((value,j) =>
-      value + B[i][j]
-    )
+  return (
+    A.length === B.length &&
+    A[0].length === B[0].length
   );
 
 }
 
 
-function subtractMatrices(A,B) {
+function addMatrices(A, B) {
 
-  return A.map((row,i) =>
-    row.map((value,j) =>
-      value - B[i][j]
-    )
+  if (!sameMatrixDimensions(A, B)) {
+    throw new Error(
+      "Para somar, as matrizes A e B devem ter as mesmas dimensões."
+    );
+  }
+
+  return A.map((row, i) =>
+    row.map((value, j) => value + B[i][j])
   );
 
 }
 
 
-function multiplyMatrixByScalar(A,k) {
+function subtractMatrices(A, B) {
+
+  if (!sameMatrixDimensions(A, B)) {
+    throw new Error(
+      "Para subtrair, as matrizes A e B devem ter as mesmas dimensões."
+    );
+  }
+
+  return A.map((row, i) =>
+    row.map((value, j) => value - B[i][j])
+  );
+
+}
+
+
+function multiplyMatrixByScalar(A, k) {
 
   return A.map(row =>
-    row.map(value =>
-      value * k
-    )
+    row.map(value => value * k)
   );
 
 }
 
 
-function multiplyMatrices(A,B) {
+function multiplyMatrices(A, B) {
 
-  const size = A.length;
+  const aCols = A[0].length;
+  const bRows = B.length;
 
-  const result =
-    Array.from(
-      {length:size},
-      () => Array(size).fill(0)
+  if (aCols !== bRows) {
+    throw new Error(
+      "Para multiplicar A × B, o número de colunas de A deve ser igual ao número de linhas de B."
     );
+  }
 
-  for(let i=0;i<size;i++) {
+  const result = Array.from(
+    { length: A.length },
+    () => Array(B[0].length).fill(0)
+  );
 
-    for(let j=0;j<size;j++) {
+  for (let i = 0; i < A.length; i++) {
 
-      for(let k=0;k<size;k++) {
+    for (let j = 0; j < B[0].length; j++) {
 
-        result[i][j] +=
-          A[i][k] * B[k][j];
+      for (let k = 0; k < aCols; k++) {
+
+        result[i][j] += A[i][k] * B[k][j];
 
       }
 
@@ -1627,60 +1474,64 @@ function multiplyMatrices(A,B) {
 
 
 function determinant(matrix) {
-
   const n = matrix.length;
-
-  if(n === 2) {
-
-    return (
-      matrix[0][0] * matrix[1][1] -
-      matrix[0][1] * matrix[1][0]
-    );
-
+  if (n !== matrix[0].length) throw new Error("Determinante exige matriz quadrada.");
+  const a = matrix.map(row => [...row]);
+  let sign = 1;
+  let result = 1;
+  for (let col = 0; col < n; col++) {
+    let pivot = col;
+    for (let row = col + 1; row < n; row++) {
+      if (Math.abs(a[row][col]) > Math.abs(a[pivot][col])) pivot = row;
+    }
+    if (Math.abs(a[pivot][col]) < 1e-12) return 0;
+    if (pivot !== col) {
+      [a[pivot], a[col]] = [a[col], a[pivot]];
+      sign *= -1;
+    }
+    const value = a[col][col];
+    result *= value;
+    for (let row = col + 1; row < n; row++) {
+      const factor = a[row][col] / value;
+      for (let j = col + 1; j < n; j++) a[row][j] -= factor * a[col][j];
+      a[row][col] = 0;
+    }
   }
+  return sign * result;
+}
 
-  if(n === 3) {
-
-    return (
-      matrix[0][0] *
-      (
-        matrix[1][1] * matrix[2][2] -
-        matrix[1][2] * matrix[2][1]
-      )
-
-      -
-
-      matrix[0][1] *
-      (
-        matrix[1][0] * matrix[2][2] -
-        matrix[1][2] * matrix[2][0]
-      )
-
-      +
-
-      matrix[0][2] *
-      (
-        matrix[1][0] * matrix[2][1] -
-        matrix[1][1] * matrix[2][0]
-      )
-    );
-
+/* Inversa pelo método de Gauss-Jordan com pivoteamento parcial. */
+function inverseMatrix(matrix) {
+  const n = matrix.length;
+  if (n !== matrix[0].length) throw new Error("Inversa exige matriz quadrada.");
+  const augmented = matrix.map((row, i) => [
+    ...row, ...Array.from({ length: n }, (_, j) => Number(i === j))
+  ]);
+  for (let col = 0; col < n; col++) {
+    let pivot = col;
+    for (let row = col + 1; row < n; row++) {
+      if (Math.abs(augmented[row][col]) > Math.abs(augmented[pivot][col])) pivot = row;
+    }
+    if (Math.abs(augmented[pivot][col]) < 1e-12) {
+      throw new Error("A matriz não possui inversa (determinante zero).");
+    }
+    [augmented[col], augmented[pivot]] = [augmented[pivot], augmented[col]];
+    const divisor = augmented[col][col];
+    for (let j = 0; j < 2 * n; j++) augmented[col][j] /= divisor;
+    for (let row = 0; row < n; row++) {
+      if (row === col) continue;
+      const factor = augmented[row][col];
+      for (let j = 0; j < 2 * n; j++) augmented[row][j] -= factor * augmented[col][j];
+    }
   }
-
-  throw new Error(
-    "Determinante disponível para 2×2 e 3×3."
-  );
-
+  return augmented.map(row => row.slice(n));
 }
 
 
 function transposeMatrix(matrix) {
 
   return matrix[0].map(
-    (_,column) =>
-      matrix.map(
-        row => row[column]
-      )
+    (_, column) => matrix.map(row => row[column])
   );
 
 }
@@ -1690,78 +1541,89 @@ function formatMatrix(matrix) {
 
   return matrix
     .map(row =>
-      "[ " +
-      row
-        .map(formatNumber)
-        .join("   ") +
-      " ]"
+      "[ " + row.map(formatNumber).join("   ") + " ]"
     )
     .join("\n");
 
 }
 
 
-document
-  .getElementById("matrixSize")
-  .addEventListener("change",createMatrixInputs);
+[
+  "matrixARows",
+  "matrixACols",
+  "matrixBRows",
+  "matrixBCols"
+].forEach(id => {
+
+  document.getElementById(id).addEventListener("change", () => {
+
+    try {
+      createMatrixInputs();
+      document.getElementById("matrixMessage").textContent = "";
+    } catch (error) {
+      showModuleMessage("matrixMessage", error.message);
+    }
+
+  });
+
+});
 
 
 document
   .getElementById("matrixOperation")
-  .addEventListener("change",() => {
+  .addEventListener("change", () => {
 
     const operation =
       document.getElementById("matrixOperation").value;
 
     document.getElementById("scalarContainer").style.display =
-      operation === "scalar"
-        ? "flex"
-        : "none";
+      operation === "scalar" ? "flex" : "none";
 
   });
 
 
 document
   .getElementById("calculateMatrix")
-  .addEventListener("click",() => {
+  .addEventListener("click", () => {
 
     try {
 
+      const operation = document.getElementById("matrixOperation").value;
       const A = getMatrix("A");
-      const B = getMatrix("B");
-
-      const operation =
-        document.getElementById("matrixOperation").value;
+      const B = ["add", "subtract", "multiply", "detB", "transposeB", "inverseB"].includes(operation)
+        ? getMatrix("B") : null;
 
       let result;
       let title;
 
-      switch(operation) {
+      switch (operation) {
 
         case "add":
-          result = addMatrices(A,B);
+          result = addMatrices(A, B);
           title = "A + B";
           break;
 
         case "subtract":
-          result = subtractMatrices(A,B);
+          result = subtractMatrices(A, B);
           title = "A − B";
           break;
 
         case "multiply":
-          result = multiplyMatrices(A,B);
+          result = multiplyMatrices(A, B);
           title = "A × B";
           break;
 
         case "scalar": {
 
-          const k =
-            Number(document.getElementById("matrixScalar").value);
+          const k = Number(
+            document.getElementById("matrixScalar").value
+          );
 
-          if (!Number.isFinite(k))
+          if (!Number.isFinite(k)) {
             throw new Error("Escalar inválido.");
+          }
 
-          result = multiplyMatrixByScalar(A,k);
+          result = multiplyMatrixByScalar(A, k);
           title = `${k} × A`;
           break;
 
@@ -1787,6 +1649,16 @@ document
           title = "Transposta de B";
           break;
 
+        case "inverseA":
+          result = inverseMatrix(A);
+          title = "Inversa de A";
+          break;
+
+        case "inverseB":
+          result = inverseMatrix(B);
+          title = "Inversa de B";
+          break;
+
         default:
           throw new Error("Operação inválida.");
 
@@ -1797,7 +1669,7 @@ document
           ? `${title}\n\n${formatMatrix(result)}`
           : `${title} = ${formatNumber(result)}`;
 
-    } catch(error) {
+    } catch (error) {
 
       showModuleMessage(
         "matrixMessage",
@@ -1815,8 +1687,8 @@ document
 
 function validateNK(n,k) {
 
-  if (!Number.isInteger(n) || !Number.isInteger(k))
-    throw new Error("n e k devem ser inteiros.");
+  if (!Number.isSafeInteger(n) || !Number.isSafeInteger(k) || n > 2000)
+    throw new Error("n e k devem ser inteiros seguros, com n até 2000.");
 
   if(n < 0 || k < 0)
     throw new Error("n e k devem ser maiores ou iguais a zero.");
@@ -1871,8 +1743,8 @@ function arrangementBigInt(n,k) {
 
 function repeatedPermutationBigInt(n,repetitions) {
 
-  if(!Number.isInteger(n) || n < 0)
-    throw new Error("n inválido.");
+  if(!Number.isSafeInteger(n) || n < 0 || n > 2000)
+    throw new Error("n deve ser inteiro entre 0 e 2000.");
 
   const total =
     repetitions.reduce(
@@ -1939,6 +1811,12 @@ document
 
       const operation =
         document.getElementById("combinatoricsOperation").value;
+      const requiredIds = operation === "repeatedPermutation"
+        ? ["repeatedN", "repeatedValues"]
+        : operation === "factorial" ? ["combinatoricsN"] : ["combinatoricsN", "combinatoricsK"];
+      if (requiredIds.some(id => !document.getElementById(id).value.trim())) {
+        throw new Error("Preencha todos os campos da operação.");
+      }
 
       let result;
       let title;
@@ -2035,40 +1913,58 @@ document
   });
 
 
+function randomInt(min,max) {
+  return Math.floor(Math.random() * (max-min+1)) + min;
+}
+
+
 /* =========================================================
-   LÓGICA BOOLEANA
+   PROBABILIDADE
    ========================================================= */
 
-const booleanTabs =
-  document.querySelectorAll(".boolean-tab");
+function validateProbability(value, name) {
 
-booleanTabs.forEach(tab => {
+  if (!Number.isFinite(value) || value < 0 || value > 1) {
+    throw new Error(`${name} deve estar entre 0 e 1.`);
+  }
 
-  tab.addEventListener("click",() => {
+}
 
-    booleanTabs.forEach(
-      item => item.classList.remove("active")
+
+function probabilityText(value) {
+  return `${formatNumber(value)} (${formatNumber(value * 100)}%)`;
+}
+
+
+const probabilityTabs =
+  document.querySelectorAll(".probability-tab");
+
+probabilityTabs.forEach(tab => {
+
+  tab.addEventListener("click", () => {
+
+    probabilityTabs.forEach(item =>
+      item.classList.remove("active")
     );
 
     tab.classList.add("active");
 
     document
-      .querySelectorAll(".boolean-section")
-      .forEach(section =>
-        section.classList.add("hidden")
-      );
+      .querySelectorAll(".probability-section")
+      .forEach(section => section.classList.add("hidden"));
 
-    const target =
-      tab.dataset.booleanSection;
+    const target = tab.dataset.probabilitySection;
+
+    const sectionIds = {
+      simple: "probabilitySimple",
+      union: "probabilityUnion",
+      conditional: "probabilityConditional",
+      binomial: "probabilityBinomial",
+      simulation: "probabilitySimulation"
+    };
 
     document
-      .getElementById(
-        target === "truth"
-          ? "booleanTruth"
-          : target === "simplify"
-            ? "booleanSimplify"
-            : "booleanCircuit"
-      )
+      .getElementById(sectionIds[target])
       .classList.remove("hidden");
 
   });
@@ -2076,872 +1972,394 @@ booleanTabs.forEach(tab => {
 });
 
 
-function normalizeBooleanExpression(expression) {
-
-  return expression
-    .toUpperCase()
-    .replaceAll("¬"," NOT ")
-    .replaceAll("∧"," AND ")
-    .replaceAll("∨"," OR ")
-    .replaceAll("⊕"," XOR ")
-    .replace(/\bNÃO\b/g,"NOT")
-    .replace(/\bE\b/g,"AND")
-    .replace(/\bOU\b/g,"OR")
-    .replace(/\s+/g," ")
-    .trim();
-
-}
-
-
-function booleanVariables(expression) {
-
-  const matches =
-    expression.match(/\b[A-D]\b/g) || [];
-
-  return [...new Set(matches)].sort();
-
-}
-
-
-function tokenizeBoolean(expression) {
-
-  const normalized =
-    normalizeBooleanExpression(expression);
-
-  const regex =
-    /\b(?:AND|OR|NOT|XOR|NAND|NOR)\b|[A-D()]|0|1/g;
-
-  return normalized.match(regex) || [];
-
-}
-
-
-function parseBooleanExpression(expression) {
-
-  const tokens =
-    tokenizeBoolean(expression);
-
-  if(!tokens.length)
-    throw new Error("Expressão booleana inválida.");
-
-  let index = 0;
-
-
-  function primary() {
-
-    const token = tokens[index];
-
-    if(token === "NOT") {
-
-      index++;
-
-      return {
-        type:"not",
-        value:primary()
-      };
-
-    }
-
-    if(token === "(") {
-
-      index++;
-
-      const value =
-        orExpression();
-
-      if(tokens[index] !== ")")
-        throw new Error("Parênteses inválidos.");
-
-      index++;
-
-      return value;
-
-    }
-
-    if(
-      /^[A-D]$/.test(token) ||
-      token === "0" ||
-      token === "1"
-    ) {
-
-      index++;
-
-      return {
-        type:"value",
-        value:token
-      };
-
-    }
-
-    throw new Error("Expressão booleana inválida.");
-
-  }
-
-
-  function andExpression() {
-
-    let left = primary();
-
-    while(
-      ["AND","NAND"].includes(tokens[index])
-      ) {
-
-      const op = tokens[index++];
-
-      left = {
-        type:op.toLowerCase(),
-        left,
-        right:primary()
-      };
-
-    }
-
-    return left;
-
-  }
-
-
-  function xorExpression() {
-
-    let left = andExpression();
-
-    while(tokens[index] === "XOR") {
-
-      index++;
-
-      left = {
-        type:"xor",
-        left,
-        right:andExpression()
-      };
-
-    }
-
-    return left;
-
-  }
-
-
-  function orExpression() {
-
-    let left = xorExpression();
-
-    while(
-      ["OR","NOR"].includes(tokens[index])
-      ) {
-
-      const op = tokens[index++];
-
-      left = {
-        type:op.toLowerCase(),
-        left,
-        right:xorExpression()
-      };
-
-    }
-
-    return left;
-
-  }
-
-
-  const tree =
-    orExpression();
-
-  if(index < tokens.length)
-    throw new Error("Expressão inválida.");
-
-  return tree;
-
-}
-
-
-function evaluateBooleanTree(node,values) {
-
-  if(node.type === "value") {
-
-    if(node.value === "0") return false;
-    if(node.value === "1") return true;
-
-    return Boolean(values[node.value]);
-
-  }
-
-  if(node.type === "not")
-    return !evaluateBooleanTree(node.value,values);
-
-  const a =
-    evaluateBooleanTree(node.left,values);
-
-  const b =
-    evaluateBooleanTree(node.right,values);
-
-  switch(node.type) {
-
-    case "and":
-      return a && b;
-
-    case "or":
-      return a || b;
-
-    case "xor":
-      return a !== b;
-
-    case "nand":
-      return !(a && b);
-
-    case "nor":
-      return !(a || b);
-
-    default:
-      throw new Error("Operador lógico inválido.");
-
-  }
-
-}
-
-
-function booleanTruthRows(expression) {
-
-  const tree =
-    parseBooleanExpression(expression);
-
-  const variables =
-    booleanVariables(
-      normalizeBooleanExpression(expression)
-    );
-
-  if(variables.length > 4)
-    throw new Error(
-      "Use no máximo 4 variáveis."
-    );
-
-  const rows = [];
-
-  const combinations =
-    2 ** variables.length;
-
-  for(let n=0;n<combinations;n++) {
-
-    const values = {};
-
-    variables.forEach((variable,index) => {
-
-      values[variable] =
-        Boolean(
-          (n >> (variables.length-index-1)) & 1
-        );
-
-    });
-
-    rows.push({
-      values,
-      result:evaluateBooleanTree(tree,values)
-    });
-
-  }
-
-  return {
-    variables,
-    rows
-  };
-
-}
-
-
 document
-  .getElementById("generateTruthTable")
-  .addEventListener("click",() => {
+  .getElementById("calculateSimpleProbability")
+  .addEventListener("click", () => {
 
     try {
 
-      const expression =
-        document
-          .getElementById("booleanExpression")
-          .value
-          .trim();
-
-      const data =
-        booleanTruthRows(expression);
-
-      let html = `
-        <div class="boolean-expression">
-          ${escapeHtml(expression)}
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-      `;
-
-      data.variables.forEach(variable => {
-        html += `<th>${variable}</th>`;
-      });
-
-      html += `<th>Resultado</th></tr></thead><tbody>`;
-
-      data.rows.forEach(row => {
-
-        html += "<tr>";
-
-        data.variables.forEach(variable => {
-
-          html += `
-            <td>
-              ${row.values[variable] ? "1" : "0"}
-            </td>
-          `;
-
-        });
-
-        html += `
-          <td class="${row.result ? "truth-one" : "truth-zero"}">
-            ${row.result ? "1" : "0"}
-          </td>
-        `;
-
-        html += "</tr>";
-
-      });
-
-      html += "</tbody></table>";
-
-      document.getElementById("truthTableResult").innerHTML =
-        html;
-
-    } catch(error) {
-
-      document.getElementById("truthTableResult").innerHTML =
-        `<p>${escapeHtml(error.message)}</p>`;
-
-    }
-
-  });
-
-
-/* =========================================================
-   SIMPLIFICAÇÃO BOOLEANA
-   ========================================================= */
-
-function expressionFromMinterms(variables,minterms) {
-
-  if(minterms.length === 0)
-    return "0";
-
-  if(minterms.length === 2 ** variables.length)
-    return "1";
-
-  return minterms.map(number => {
-
-    const bits =
-      number
-        .toString(2)
-        .padStart(variables.length,"0");
-
-    return variables.map((variable,index) => {
-
-      return bits[index] === "1"
-        ? variable
-        : `NOT ${variable}`;
-
-    }).join(" AND ");
-
-  }).join(" OR ");
-
-}
-
-
-document
-  .getElementById("simplifyBoolean")
-  .addEventListener("click",() => {
-
-    try {
-
-      const expression =
-        document
-          .getElementById("simplifyExpression")
-          .value
-          .trim();
-
-      const data =
-        booleanTruthRows(expression);
-
-      const minterms = [];
-
-      data.rows.forEach((row,index) => {
-
-        if(row.result)
-          minterms.push(index);
-
-      });
-
-      const canonical =
-        expressionFromMinterms(
-          data.variables,
-          minterms
-        );
-
-      document.getElementById("simplifyResult").innerHTML = `
-        <div class="boolean-expression">
-          Expressão original:<br>
-          ${escapeHtml(expression)}
-        </div>
-
-        <div class="boolean-expression">
-          Forma equivalente:<br>
-          ${escapeHtml(canonical)}
-        </div>
-
-        <p>
-          A tabela-verdade foi utilizada para encontrar uma
-          forma equivalente da expressão.
-        </p>
-      `;
-
-    } catch(error) {
-
-      document.getElementById("simplifyResult").innerHTML =
-        `<p>${escapeHtml(error.message)}</p>`;
-
-    }
-
-  });
-
-
-/* =========================================================
-   CIRCUITOS
-   ========================================================= */
-
-function calculateGate(a,b,operation) {
-
-  a = Boolean(Number(a));
-  b = Boolean(Number(b));
-
-  switch(operation) {
-
-    case "AND":
-      return a && b;
-
-    case "OR":
-      return a || b;
-
-    case "XOR":
-      return a !== b;
-
-    case "NAND":
-      return !(a && b);
-
-    case "NOR":
-      return !(a || b);
-
-  }
-
-}
-
-
-function updateCircuit() {
-
-  const a =
-    document.getElementById("circuitA").value;
-
-  const b =
-    document.getElementById("circuitB").value;
-
-  const operation =
-    document.getElementById("circuitOperation").value;
-
-  const result =
-    calculateGate(a,b,operation);
-
-  document.getElementById("circuitAValue").textContent =
-    a;
-
-  document.getElementById("gateName").textContent =
-    operation;
-
-  document.getElementById("circuitOutput").textContent =
-    result ? "1" : "0";
-
-}
-
-
-document
-  .getElementById("calculateCircuit")
-  .addEventListener("click",updateCircuit);
-
-
-/* =========================================================
-   EXERCÍCIOS
-   ========================================================= */
-
-function randomInt(min,max) {
-
-  return Math.floor(
-    Math.random() * (max-min+1)
-  ) + min;
-
-}
-
-
-function randomChoice(array) {
-
-  return array[
-    randomInt(0,array.length-1)
-    ];
-
-}
-
-
-function makeExercise(category,title,text,answer) {
-
-  return {
-    category,
-    title,
-    text,
-    answer
-  };
-
-}
-
-
-function generateExercises() {
-
-  const list = [];
-
-
-  /* ---------- BÁSICO ---------- */
-
-  for(let i=0;i<15;i++) {
-
-    const a = randomInt(10,100);
-    const b = randomInt(5,80);
-
-    list.push(
-      makeExercise(
-        "basic",
-        "Adição",
-        `Calcule ${a} + ${b}.`,
-        `${a+b}`
-      )
-    );
-
-  }
-
-
-  for(let i=0;i<15;i++) {
-
-    const a = randomInt(30,150);
-    const b = randomInt(5,a);
-
-    list.push(
-      makeExercise(
-        "basic",
-        "Subtração",
-        `Calcule ${a} − ${b}.`,
-        `${a-b}`
-      )
-    );
-
-  }
-
-
-  for(let i=0;i<10;i++) {
-
-    const a = randomInt(2,15);
-    const b = randomInt(2,12);
-
-    list.push(
-      makeExercise(
-        "basic",
-        "Multiplicação",
-        `Calcule ${a} × ${b}.`,
-        `${a*b}`
-      )
-    );
-
-  }
-
-
-  for(let i=0;i<10;i++) {
-
-    const b = randomInt(2,15);
-    const result = randomInt(2,15);
-    const a = b * result;
-
-    list.push(
-      makeExercise(
-        "basic",
-        "Divisão",
-        `Calcule ${a} ÷ ${b}.`,
-        `${result}`
-      )
-    );
-
-  }
-
-
-  /* ---------- ÁLGEBRA ---------- */
-
-  for(let i=0;i<15;i++) {
-
-    const a = randomInt(2,10);
-    const x = randomInt(1,10);
-    const b = randomInt(1,20);
-    const c = a*x+b;
-
-    list.push(
-      makeExercise(
-        "algebra",
-        "Equação do 1º grau",
-        `Resolva: ${a}x + ${b} = ${c}.`,
-        `x = ${x}`
-      )
-    );
-
-  }
-
-
-  for(let i=0;i<15;i++) {
-
-    const x = randomInt(-5,5);
-    const b = randomInt(-8,8);
-    const result = x*x+b;
-
-    list.push(
-      makeExercise(
-        "algebra",
-        "Função quadrática",
-        `Para f(x) = x² ${b >= 0 ? "+" : "−"} ${Math.abs(b)}, calcule f(${x}).`,
-        `f(${x}) = ${result}`
-      )
-    );
-
-  }
-
-
-  /* ---------- PORCENTAGEM ---------- */
-
-  for(let i=0;i<15;i++) {
-
-    const percentage =
-      randomChoice([10,15,20,25,30,40,50]);
-
-    const value =
-      randomInt(2,20) * 10;
-
-    const result =
-      value * percentage / 100;
-
-    list.push(
-      makeExercise(
-        "percentage",
-        "Porcentagem",
-        `Quanto é ${percentage}% de ${value}?`,
-        `${result}`
-      )
-    );
-
-  }
-
-
-  for(let i=0;i<10;i++) {
-
-    const value =
-      randomInt(5,50) * 10;
-
-    const discount =
-      randomChoice([10,15,20,25,30]);
-
-    const result =
-      value - value*discount/100;
-
-    list.push(
-      makeExercise(
-        "percentage",
-        "Desconto",
-        `Um produto custa R$ ${value}. Com desconto de ${discount}%, qual será o preço final?`,
-        `R$ ${result.toFixed(2).replace(".",",")}`
-      )
-    );
-
-  }
-
-
-  /* ---------- TRIGONOMETRIA ---------- */
-
-  const angles = [0,30,45,60,90];
-
-  angles.forEach(angle => {
-
-    let value;
-
-    if(angle === 0) value = "0";
-    if(angle === 30) value = "0,5";
-    if(angle === 45) value = "√2/2";
-    if(angle === 60) value = "√3/2";
-    if(angle === 90) value = "1";
-
-    list.push(
-      makeExercise(
-        "trigonometry",
-        "Seno",
-        `Calcule sen(${angle}°).`,
-        value
-      )
-    );
-
-  });
-
-
-  angles.forEach(angle => {
-
-    let value;
-
-    if(angle === 0) value = "1";
-    if(angle === 30) value = "√3/2";
-    if(angle === 45) value = "√2/2";
-    if(angle === 60) value = "0,5";
-    if(angle === 90) value = "0";
-
-    list.push(
-      makeExercise(
-        "trigonometry",
-        "Cosseno",
-        `Calcule cos(${angle}°).`,
-        value
-      )
-    );
-
-  });
-
-
-  return list;
-
-}
-
-
-const exercises =
-  generateExercises();
-
-
-function renderExercises(category="all") {
-
-  const viewer =
-    document.getElementById("exerciseViewer");
-
-  const filtered =
-    category === "all"
-      ? exercises
-      : exercises.filter(
-        exercise =>
-          exercise.category === category
+      const favorable = Number(
+        document.getElementById("probabilityFavorable").value
       );
 
-  viewer.innerHTML =
-    filtered.map(
-      (exercise,index) => `
+      const possible = Number(
+        document.getElementById("probabilityPossible").value
+      );
 
-        <div class="exercise-card">
-
-          <h3>
-            ${index+1}. ${escapeHtml(exercise.title)}
-          </h3>
-
-          <p>
-            ${escapeHtml(exercise.text)}
-          </p>
-
-          <details>
-
-            <summary>Mostrar resposta</summary>
-
-            <div class="exercise-answer">
-              ${escapeHtml(exercise.answer)}
-            </div>
-
-          </details>
-
-        </div>
-
-      `
-    ).join("");
-
-}
-
-
-document
-  .querySelectorAll(".exercise-category-title")
-  .forEach(button => {
-
-    button.addEventListener("click",() => {
-
-      if(button.id === "randomExercise") {
-
-        const random =
-          randomChoice(exercises);
-
-        document
-          .querySelectorAll(".exercise-category-title")
-          .forEach(
-            item => item.classList.remove("active")
-          );
-
-        button.classList.add("active");
-
-        document.getElementById("exerciseViewer").innerHTML = `
-
-          <div class="exercise-card">
-
-            <h3>
-              Exercício aleatório
-            </h3>
-
-            <p>
-              ${escapeHtml(random.text)}
-            </p>
-
-            <details>
-
-              <summary>Mostrar resposta</summary>
-
-              <div class="exercise-answer">
-                ${escapeHtml(random.answer)}
-              </div>
-
-            </details>
-
-          </div>
-
-        `;
-
-        return;
-
+      if (
+        !Number.isInteger(favorable) ||
+        !Number.isInteger(possible) ||
+        favorable < 0 ||
+        possible <= 0
+      ) {
+        throw new Error(
+          "Casos favoráveis e possíveis devem ser números inteiros válidos."
+        );
       }
 
-      document
-        .querySelectorAll(".exercise-category-title")
-        .forEach(
-          item => item.classList.remove("active")
+      if (favorable > possible) {
+        throw new Error(
+          "Os casos favoráveis não podem ser maiores que os casos possíveis."
         );
+      }
 
-      button.classList.add("active");
+      const p = favorable / possible;
+      const complement = 1 - p;
 
-      renderExercises(
-        button.dataset.category
-      );
+      document.getElementById("simpleProbabilityResult").innerHTML =
+        `P(A) = ${probabilityText(p)}<br>` +
+        `P(Aᶜ) = ${probabilityText(complement)}`;
 
-    });
+    } catch (error) {
+      showModuleMessage("probabilityMessage", error.message);
+    }
 
   });
 
 
 document
-  .getElementById("openExercises")
-  .addEventListener("click",() => {
+  .getElementById("calculateUnionProbability")
+  .addEventListener("click", () => {
 
-    openPage("exercises");
+    try {
+
+      const pA = Number(document.getElementById("probabilityA").value);
+      const pB = Number(document.getElementById("probabilityB").value);
+      const pIntersection = Number(
+        document.getElementById("probabilityIntersection").value
+      );
+
+      validateProbability(pA, "P(A)");
+      validateProbability(pB, "P(B)");
+      validateProbability(pIntersection, "P(A ∩ B)");
+
+      if (pIntersection > Math.min(pA, pB)) {
+        throw new Error(
+          "P(A ∩ B) não pode ser maior que P(A) nem que P(B)."
+        );
+      }
+
+      const union = pA + pB - pIntersection;
+
+      validateProbability(union, "P(A ∪ B)");
+
+      document.getElementById("unionProbabilityResult").innerHTML =
+        `P(A ∩ B) = ${probabilityText(pIntersection)}<br>` +
+        `P(A ∪ B) = ${probabilityText(union)}`;
+
+    } catch (error) {
+      showModuleMessage("probabilityMessage", error.message);
+    }
 
   });
+
+
+document
+  .getElementById("calculateConditionalProbability")
+  .addEventListener("click", () => {
+
+    try {
+
+      const pIntersection = Number(
+        document.getElementById("conditionalIntersection").value
+      );
+
+      const pB = Number(
+        document.getElementById("conditionalB").value
+      );
+
+      validateProbability(pIntersection, "P(A ∩ B)");
+      validateProbability(pB, "P(B)");
+
+      if (pB === 0) {
+        throw new Error(
+          "P(B) deve ser maior que zero para calcular P(A|B)."
+        );
+      }
+
+      if (pIntersection > pB) {
+        throw new Error(
+          "P(A ∩ B) não pode ser maior que P(B)."
+        );
+      }
+
+      const conditional = pIntersection / pB;
+
+      document.getElementById("conditionalProbabilityResult").textContent =
+        `P(A|B) = ${probabilityText(conditional)}`;
+
+    } catch (error) {
+      showModuleMessage("probabilityMessage", error.message);
+    }
+
+  });
+
+
+document
+  .getElementById("calculateBinomialProbability")
+  .addEventListener("click", () => {
+
+    try {
+
+      const n = Number(document.getElementById("binomialN").value);
+      const k = Number(document.getElementById("binomialK").value);
+      const p = Number(document.getElementById("binomialP").value);
+
+      validateNK(n, k);
+      validateProbability(p, "p");
+
+      if (n > 1000) {
+        throw new Error("Para esta calculadora, use n até 1000.");
+      }
+
+      const combinations = Number(combinationBigInt(n, k));
+
+      const result =
+        combinations *
+        (p ** k) *
+        ((1 - p) ** (n - k));
+
+      document.getElementById("binomialProbabilityResult").textContent =
+        `P(X = ${k}) = ${probabilityText(result)}`;
+
+    } catch (error) {
+      showModuleMessage("probabilityMessage", error.message);
+    }
+
+  });
+
+
+function runSimulation(type, trials) {
+
+  let successes = 0;
+  let theoretical;
+  let description;
+
+  for (let i = 0; i < trials; i++) {
+
+    if (type === "dice") {
+      if (randomInt(1, 6) === 6) successes++;
+      theoretical = 1 / 6;
+      description = "resultado 6 no dado";
+    }
+
+    if (type === "coin") {
+      if (randomInt(0, 1) === 1) successes++;
+      theoretical = 1 / 2;
+      description = "cara na moeda";
+    }
+
+    if (type === "card") {
+      if (randomInt(1, 52) <= 4) successes++;
+      theoretical = 4 / 52;
+      description = "ás em uma carta retirada do baralho";
+    }
+
+  }
+
+  return {
+    successes,
+    theoretical,
+    description,
+    relative: successes / trials
+  };
+
+}
+
+
+document
+  .getElementById("runProbabilitySimulation")
+  .addEventListener("click", () => {
+
+    try {
+
+      const type =
+        document.getElementById("simulationType").value;
+
+      const trials = Number(
+        document.getElementById("simulationTrials").value
+      );
+
+      if (
+        !Number.isInteger(trials) ||
+        trials < 1 ||
+        trials > 100000
+      ) {
+        throw new Error(
+          "A quantidade de tentativas deve ser um inteiro entre 1 e 100000."
+        );
+      }
+
+      const data = runSimulation(type, trials);
+      const difference = data.relative - data.theoretical;
+      const width = Math.min(100, Math.max(0, data.relative * 100));
+
+      document.getElementById("simulationProbabilityResult").innerHTML = `
+        <strong>Evento observado:</strong> ${escapeHtml(data.description)}<br>
+        <strong>Frequência observada:</strong> ${data.successes} de ${trials}<br>
+        <strong>Frequência relativa:</strong> ${probabilityText(data.relative)}<br>
+        <strong>Probabilidade teórica:</strong> ${probabilityText(data.theoretical)}<br>
+        <strong>Diferença observado − teórico:</strong> ${formatNumber(difference * 100)} ponto(s) percentual(is)
+        <div class="simulation-bar" aria-label="Frequência relativa observada">
+          <div class="simulation-bar-fill" style="width:${width}%"></div>
+        </div>
+      `;
+
+    } catch (error) {
+      showModuleMessage("probabilityMessage", error.message);
+    }
+
+  });
+
+
+/* =========================================================
+   TECLADO FÍSICO
+   ========================================================= */
+
+function isEditableElement(element) {
+
+  if (!element) return false;
+
+  const tag = element.tagName;
+
+  return (
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    tag === "SELECT" ||
+    element.isContentEditable
+  );
+
+}
+
+
+document.addEventListener("keydown", event => {
+
+  if (isEditableElement(document.activeElement)) {
+    return;
+  }
+
+  const activePage = document.querySelector(".page.active-page");
+
+  if (!activePage) return;
+
+  const page = activePage.id;
+  const key = event.key;
+
+  if (page === "calculator") {
+
+    if (/^[0-9]$/.test(key)) {
+      addNumber(key);
+      event.preventDefault();
+      return;
+    }
+
+    if (key === ".") {
+      addDecimal();
+      event.preventDefault();
+      return;
+    }
+
+    if (["+", "-", "*", "/"].includes(key)) {
+      chooseOperation(key);
+      event.preventDefault();
+      return;
+    }
+
+    if (key === "(" || key === ")") {
+
+      if (key === "(") {
+        if (
+          expression === "" ||
+          /[+\-*/(]$/.test(expression)
+        ) {
+          expression += "(";
+        } else {
+          expression += "*(";
+        }
+      } else {
+        const open = (expression.match(/\(/g) || []).length;
+        const close = (expression.match(/\)/g) || []).length;
+        if (open > close && /[0-9)]$/.test(expression)) {
+          expression += ")";
+        }
+      }
+
+      updateDisplay();
+      event.preventDefault();
+      return;
+    }
+
+    if (key === "Enter") {
+      calculate();
+      event.preventDefault();
+      return;
+    }
+
+    if (key === "Backspace") {
+      deleteNumber();
+      event.preventDefault();
+      return;
+    }
+
+    if (key === "Escape") {
+      expression = "";
+      currentValue = "0";
+      justCalculated = false;
+      previousOperationDisplay.textContent = "";
+      calculatorMessage.textContent = "";
+      updateDisplay();
+      event.preventDefault();
+    }
+
+  }
+
+  if (page === "scientific") {
+
+    if (/^[0-9]$/.test(key)) {
+      scientificAddNumber(key);
+      event.preventDefault();
+      return;
+    }
+
+    if (key === ".") {
+      scientificDecimal();
+      event.preventDefault();
+      return;
+    }
+
+    if (["+", "-", "*", "/"].includes(key)) {
+      scientificChooseOperation(key);
+      event.preventDefault();
+      return;
+    }
+
+    if (key === "Enter") {
+      document
+        .querySelector('[data-scientific-action="calculate"]')
+        .click();
+      event.preventDefault();
+      return;
+    }
+
+    if (key === "Backspace") {
+      scientificDelete();
+      event.preventDefault();
+      return;
+    }
+
+    if (key === "Escape") {
+      scientificExpression = "";
+      scientificValue = "0";
+      scientificJustCalculated = false;
+      scientificPrevious.textContent = "";
+      scientificMessage.textContent = "";
+      updateScientificDisplay();
+      event.preventDefault();
+    }
+
+  }
+
+});
 
 
 /* =========================================================
@@ -2955,10 +2373,6 @@ document.getElementById("scalarContainer").style.display =
 
 updateCombinatoricsForm();
 
-updateCircuit();
-
 updateDisplay();
 
 updateScientificDisplay();
-
-renderExercises();

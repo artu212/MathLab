@@ -1,17 +1,17 @@
 :root {
-  --background:#f3f5f8;
+  --background:#e7e7e7;
   --surface:#ffffff;
-  --surface-secondary:#eef1f5;
-  --text:#20242a;
-  --text-secondary:#737a84;
+  --surface-secondary:#f1f1f1;
+  --text:#262626;
+  --text-secondary:#6d6d6d;
   --border:rgba(0,0,0,.08);
 
-  --primary:#e38a32;
-  --secondary:#d9dde3;
-  --scientific:#7c8795;
-  --equals:#444b55;
+  --primary:#f0171f;
+  --secondary:#d5d5d5;
+  --scientific:#777777;
+  --equals:#f0171f;
 
-  --glow:rgba(227,138,50,.45);
+  --glow:rgba(240,23,31,.28);
 
   --shadow:0 12px 35px rgba(0,0,0,.08);
   --button-shadow:0 5px 12px rgba(0,0,0,.08);
@@ -31,16 +31,6 @@ body {
   transition:.3s;
 }
 
-body.dark {
-  --background:#121417;
-  --surface:#1c2025;
-  --surface-secondary:#252a31;
-  --text:#f4f4f4;
-  --text-secondary:#a7adb5;
-  --border:rgba(255,255,255,.08);
-  --secondary:#343a42;
-  --shadow:0 12px 35px rgba(0,0,0,.3);
-}
 
 
 /* ================= HEADER ================= */
@@ -60,17 +50,13 @@ body.dark {
   gap:14px;
 }
 
-.brand-icon {
-  width:48px;
-  height:48px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+.brand-logo {
+  width:110px;
+  height:auto;
+  object-fit:contain;
   border-radius:14px;
-  background:var(--primary);
-  color:white;
-  font-size:25px;
-  font-weight:bold;
+  display:block;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
 }
 
 .brand h1 {
@@ -83,30 +69,6 @@ body.dark {
   font-size:13px;
 }
 
-.theme-controls {
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.theme-toggle {
-  width:42px;
-  height:42px;
-  border:none;
-  border-radius:12px;
-  background:var(--surface-secondary);
-  color:var(--text);
-  cursor:pointer;
-  font-size:18px;
-}
-
-#themeSelect {
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:var(--surface);
-  color:var(--text);
-}
 
 
 /* ================= TABS ================= */
@@ -215,7 +177,7 @@ body.dark {
 .calculator-keyboard,
 .scientific-number-keyboard {
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(5,1fr);
   gap:10px;
 }
 
@@ -245,8 +207,8 @@ body.dark {
 }
 
 .operation-button {
-  background:var(--primary);
-  color:white;
+  background:var(--scientific);
+  color:var(--text);
 }
 
 .equal-button {
@@ -254,7 +216,8 @@ body.dark {
   color:white;
 }
 
-.backspace-button {
+.wide-equal-button,
+.scientific-equal-button {
   grid-column:span 4;
 }
 
@@ -386,7 +349,7 @@ body.dark {
 
 .scientific-button {
   background:var(--scientific);
-  color:white;
+  color:var(--text);
   font-size:15px;
 }
 
@@ -423,8 +386,7 @@ body.dark {
 
 .function-form label,
 .combinatorics-form label,
-.matrix-controls label,
-.boolean-section > label {
+.matrix-controls label {
   display:flex;
   flex-direction:column;
   gap:7px;
@@ -436,9 +398,7 @@ body.dark {
 .combinatorics-form input,
 .combinatorics-form select,
 .matrix-controls input,
-.matrix-controls select,
-.boolean-section input,
-.boolean-section select {
+.matrix-controls select {
   padding:11px;
   border-radius:10px;
   border:1px solid var(--border);
@@ -458,29 +418,24 @@ body.dark {
   margin-top:20px;
 }
 
-.function-table table,
-.boolean-result table {
+.function-table table {
   width:100%;
   border-collapse:collapse;
 }
 
 .function-table th,
-.function-table td,
-.boolean-result th,
-.boolean-result td {
+.function-table td {
   padding:10px;
   border:1px solid var(--border);
   text-align:center;
 }
 
-.function-table th,
-.boolean-result th {
+.function-table th {
   background:var(--surface-secondary);
 }
 
 .result-box,
-.matrix-result,
-.boolean-result {
+.matrix-result {
   margin-top:20px;
   padding:18px;
   border-radius:14px;
@@ -505,6 +460,26 @@ body.dark {
   margin-bottom:25px;
 }
 
+.matrix-dimension-group {
+  display:flex;
+  gap:10px;
+  align-items:flex-end;
+  margin:0;
+  padding:10px 12px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+.matrix-dimension-group legend {
+  padding:0 6px;
+  font-weight:bold;
+  font-size:14px;
+}
+
+.matrix-dimension-group input {
+  width:82px;
+}
+
 .matrices-wrapper {
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -518,7 +493,7 @@ body.dark {
 
 .matrix-grid {
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(2,1fr);
   gap:8px;
 }
 
@@ -532,16 +507,16 @@ body.dark {
 }
 
 
-/* ================= BOOLEAN ================= */
+/* ================= PROBABILIDADE ================= */
 
-.boolean-tabs {
+.probability-tabs {
   display:flex;
   gap:10px;
   flex-wrap:wrap;
-  margin-bottom:25px;
+  margin-bottom:24px;
 }
 
-.boolean-tab {
+.probability-tab {
   border:none;
   padding:10px 16px;
   border-radius:10px;
@@ -551,156 +526,60 @@ body.dark {
   font-weight:bold;
 }
 
-.boolean-tab.active {
+.probability-tab.active {
   background:var(--primary);
   color:white;
 }
 
-.boolean-section {
+.probability-section {
   display:flex;
   flex-direction:column;
-  gap:15px;
+  gap:16px;
 }
 
-.help-text {
+.probability-section h3 {
   margin:0;
-  color:var(--text-secondary);
-  font-size:13px;
-  line-height:1.5;
 }
 
-.boolean-result {
-  line-height:1.6;
-}
-
-.boolean-expression {
-  padding:14px;
-  border-radius:10px;
-  background:var(--surface);
-  margin-bottom:15px;
-  font-weight:bold;
-}
-
-.truth-one {
-  color:#16803c;
-  font-weight:bold;
-}
-
-.truth-zero {
-  color:#c62828;
-  font-weight:bold;
-}
-
-.circuit-result {
-  margin-top:20px;
-  padding:30px 20px;
-  border-radius:18px;
-  background:var(--surface-secondary);
+.probability-section label {
   display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:15px;
-  flex-wrap:wrap;
-}
-
-.circuit-node {
-  min-width:95px;
-  padding:15px;
-  border-radius:14px;
-  background:var(--surface);
-  text-align:center;
-  box-shadow:var(--button-shadow);
-}
-
-.circuit-node strong {
-  display:block;
-  font-size:25px;
-  margin-top:5px;
-}
-
-.logic-gate {
-  min-width:90px;
-  padding:20px 15px;
-  border-radius:45% 15px 15px 45%;
-  background:var(--primary);
-  color:white;
-  text-align:center;
+  flex-direction:column;
+  gap:7px;
+  font-size:14px;
   font-weight:bold;
 }
 
-.circuit-wire {
-  width:45px;
-  height:4px;
-  background:var(--text-secondary);
-}
-
-
-/* ================= EXERCISES ================= */
-
-.exercises-container {
-  background:var(--surface);
-  padding:25px;
-  border-radius:22px;
-  box-shadow:var(--shadow);
-}
-
-.exercise-header h2 {
-  margin-bottom:5px;
-}
-
-.exercise-header p {
-  color:var(--text-secondary);
-}
-
-.exercise-categories {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:20px 0;
-}
-
-.exercise-category-title {
-  border:none;
-  padding:10px 16px;
+.probability-section input,
+.probability-section select {
+  padding:11px;
   border-radius:10px;
-  background:var(--surface-secondary);
-  color:var(--text);
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.exercise-category-title.active {
-  background:var(--primary);
-  color:white;
-}
-
-.random-exercise-button {
-  border:2px dashed var(--primary);
-}
-
-.exercise-card {
-  padding:18px;
-  margin-bottom:15px;
   border:1px solid var(--border);
-  border-radius:15px;
-  background:var(--surface-secondary);
-}
-
-.exercise-card h3 {
-  margin-top:0;
-}
-
-.exercise-card p {
-  line-height:1.6;
-}
-
-.exercise-answer {
-  margin-top:10px;
-  padding:10px;
   background:var(--surface);
-  border-radius:10px;
+  color:var(--text);
+  font-size:15px;
 }
 
+.probability-simulation-result {
+  margin-top:4px;
+  padding:18px;
+  border-radius:14px;
+  background:var(--surface-secondary);
+  line-height:1.7;
+}
+
+.simulation-bar {
+  margin-top:14px;
+  height:18px;
+  border-radius:999px;
+  background:#d7d7d7;
+  overflow:hidden;
+}
+
+.simulation-bar-fill {
+  height:100%;
+  background:var(--primary);
+  width:0;
+}
 
 /* ================= HIDDEN ================= */
 
@@ -708,167 +587,6 @@ body.dark {
   display:none !important;
 }
 
-
-/* ================= LEGO ================= */
-
-body.lego {
-  --primary:#e63946;
-  --secondary:#f4c430;
-  --scientific:#1976d2;
-  --equals:#43a047;
-  --glow:rgba(244,196,48,.55);
-}
-
-body.lego .calc-button {
-  position:relative;
-  border-radius:8px;
-  border:2px solid rgba(0,0,0,.12);
-  box-shadow:
-    inset 0 -5px 0 rgba(0,0,0,.16),
-    0 5px 0 rgba(0,0,0,.18),
-    0 7px 12px rgba(0,0,0,.12);
-  font-weight:900;
-}
-
-body.lego .calc-button::before {
-  content:"";
-  position:absolute;
-  width:9px;
-  height:9px;
-  top:5px;
-  left:7px;
-  border-radius:50%;
-  background:rgba(255,255,255,.35);
-  box-shadow:14px 0 rgba(255,255,255,.35);
-  pointer-events:none;
-}
-
-body.lego .calc-button:hover {
-  filter:brightness(1.06);
-  transform:translateY(-2px);
-}
-
-body.lego .calc-button:active {
-  transform:translateY(4px);
-  box-shadow:
-    inset 0 -2px 0 rgba(0,0,0,.16),
-    0 2px 0 rgba(0,0,0,.18);
-}
-
-body.lego .operation-button {
-  background:#e53935;
-}
-
-body.lego .action-button {
-  background:#f4c430;
-  color:#222;
-}
-
-body.lego .equal-button {
-  background:#43a047;
-}
-
-body.lego .scientific-button {
-  background:#1976d2;
-}
-
-
-/* ================= DRAGON BALL ================= */
-
-body.dragonball {
-  --primary:#e87522;
-  --scientific:#1769aa;
-  --equals:#2455a4;
-  --glow:rgba(232,117,34,.55);
-}
-
-body.dragonball .brand-icon {
-  background:#e87522;
-}
-
-
-/* ================= SUPERMAN ================= */
-
-body.superman {
-  --primary:#1565c0;
-  --scientific:#1565c0;
-  --equals:#d62828;
-  --glow:rgba(21,101,192,.5);
-}
-
-body.superman .operation-button,
-body.superman .scientific-button {
-  background:#1565c0;
-  color:white;
-}
-
-body.superman .equal-button {
-  background:#d62828;
-  color:white;
-}
-
-body.superman .brand-icon {
-  background:#d62828;
-}
-
-
-/* ================= BATMAN ================= */
-
-body.batman {
-  --primary:#e5b800;
-  --scientific:#303030;
-  --equals:#181818;
-  --glow:rgba(229,184,0,.5);
-}
-
-body.batman .brand-icon {
-  background:#181818;
-  color:#e5b800;
-}
-
-
-/* ================= HOMEM-ARANHA ================= */
-
-body.spiderman {
-  --primary:#d62828;
-  --scientific:#d62828;
-  --equals:#1565c0;
-  --glow:rgba(214,40,40,.5);
-}
-
-body.spiderman .operation-button,
-body.spiderman .scientific-button {
-  background:#d62828;
-  color:white;
-}
-
-body.spiderman .equal-button {
-  background:#1565c0;
-  color:white;
-}
-
-body.spiderman .brand-icon {
-  background:#d62828;
-}
-
-
-/* ================= HOMEM DE FERRO ================= */
-
-body.ironman {
-  --primary:#c62828;
-  --scientific:#b8860b;
-  --equals:#9e1b1b;
-  --glow:rgba(184,134,11,.55);
-}
-
-body.ironman .brand-icon {
-  background:#c62828;
-}
-
-body.ironman .operation-button,
-body.ironman .scientific-button {
-  background:#b8860b;
-}
 
 
 /* ================= RESPONSIVO ================= */
@@ -898,7 +616,27 @@ body.ironman .scientific-button {
   }
 
   .scientific-function-row {
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .matrix-dimension-group {
+    display:flex;
+    gap:10px;
+    align-items:flex-end;
+    margin:0;
+    padding:10px 12px 12px;
+    border:1px solid var(--border);
+    border-radius:12px;
+  }
+
+  .matrix-dimension-group legend {
+    padding:0 6px;
+    font-weight:bold;
+    font-size:14px;
+  }
+
+  .matrix-dimension-group input {
+    width:82px;
   }
 
   .matrices-wrapper {
@@ -908,6 +646,11 @@ body.ironman .scientific-button {
 }
 
 @media(max-width:500px) {
+
+  .brand-logo {
+    width:50px;
+    height:50px;
+  }
 
   .page {
     padding:0 10px;
