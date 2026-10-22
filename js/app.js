@@ -2245,6 +2245,16 @@ document.addEventListener("keydown", event => {
   const page = activePage.id;
   const key = event.key;
 
+  // Delete limpa a calculadora inteira; Backspace continua apagando um caractere.
+  if (key === "Delete" && (page === "calculator" || page === "scientific")) {
+    event.preventDefault();
+    const clearButton = page === "calculator"
+      ? document.querySelector('#calculator [data-action="clear"]')
+      : document.querySelector('#scientific [data-scientific-action="clear"]');
+    if (clearButton) clearButton.click();
+    return;
+  }
+
   if (page === "calculator") {
 
     if (/^[0-9]$/.test(key)) {
@@ -2376,3 +2386,40 @@ updateCombinatoricsForm();
 updateDisplay();
 
 updateScientificDisplay();
+
+
+/* =========================================================
+   TEMA CLARO/ESCURO
+   ========================================================= */
+
+(function initializeTheme() {
+  const themeButton = document.getElementById("themeToggle");
+  if (!themeButton) return;
+
+  const storageKey = "mathlab-theme";
+  let theme = "light"; // Mantém o visual atual como padrão.
+
+  try {
+    const savedTheme = localStorage.getItem(storageKey);
+    if (savedTheme === "light" || savedTheme === "dark") theme = savedTheme;
+  } catch (_) {
+    // O alternador continua funcionando mesmo com armazenamento bloqueado.
+  }
+
+  function applyTheme(nextTheme) {
+    theme = nextTheme;
+    document.documentElement.dataset.theme = theme;
+    const isDark = theme === "dark";
+    themeButton.setAttribute("aria-pressed", String(isDark));
+    themeButton.setAttribute("aria-label", isDark ? "Ativar modo claro" : "Ativar modo escuro");
+    themeButton.querySelector(".theme-icon").textContent = isDark ? "☀" : "☾";
+    themeButton.querySelector(".theme-label").textContent = isDark ? "Modo claro" : "Modo escuro";
+  }
+
+  applyTheme(theme);
+  themeButton.addEventListener("click", () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    applyTheme(nextTheme);
+    try { localStorage.setItem(storageKey, nextTheme); } catch (_) { /* opcional */ }
+  });
+})();

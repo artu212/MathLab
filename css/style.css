@@ -51,7 +51,7 @@ body {
 }
 
 .brand-logo {
-  width:110px;
+  width:90px;
   height:auto;
   object-fit:contain;
   border-radius:14px;
@@ -648,8 +648,8 @@ body {
 @media(max-width:500px) {
 
   .brand-logo {
-    width:50px;
-    height:50px;
+    width:64px;
+    height:auto;
   }
 
   .page {
@@ -679,4 +679,140 @@ body {
     grid-template-columns:repeat(2,1fr);
   }
 
+}
+
+
+/* =========================================================
+   TEMAS, BOTÃO DE ALTERNÂNCIA E HOVER NEON
+   ========================================================= */
+
+:root {
+  color-scheme:light;
+  --hover-neutral:rgba(160,170,185,.72);
+  --hover-operation:rgba(110,125,150,.85);
+  --hover-action:rgba(225,165,80,.85);
+  --hover-primary:rgba(240,23,31,.9);
+  --focus-color:#bd1822;
+}
+
+html[data-theme="dark"] {
+  color-scheme:dark;
+  --background:#16191f;
+  --surface:#242932;
+  --surface-secondary:#343b47;
+  --text:#f2f4f8;
+  --text-secondary:#c2c9d4;
+  --border:rgba(255,255,255,.13);
+  --primary:#f04450;
+  --secondary:#545d6c;
+  --scientific:#596579;
+  --equals:#e72d3b;
+  --glow:rgba(240,68,80,.42);
+  --shadow:0 12px 35px rgba(0,0,0,.3);
+  --button-shadow:0 5px 12px rgba(0,0,0,.25);
+  --hover-neutral:rgba(218,228,245,.9);
+  --hover-operation:rgba(134,180,255,.9);
+  --hover-action:rgba(255,195,96,.9);
+  --hover-primary:rgba(255,89,108,.95);
+  --focus-color:#ff9ba5;
+}
+
+body,
+.topbar,
+.tabs,
+.calculator-card,
+.scientific-calculator,
+.module-card,
+.panel-card,
+.learning-card,
+.display,
+.scientific-display,
+.result-box,
+.matrix-result,
+.probability-simulation-result {
+  transition:background-color .22s ease,color .22s ease,border-color .22s ease;
+}
+
+.theme-toggle {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--surface-secondary);
+  color:var(--text);
+  padding:11px 15px;
+  font-weight:700;
+  cursor:pointer;
+  --neon-color:var(--hover-primary);
+}
+
+.theme-icon {font-size:19px;line-height:1;}
+
+/* A cor do brilho acompanha a função/cor de cada botão. */
+.calc-button,
+.tab-button,
+.panel-button,
+.probability-tab,
+.panel-title button,
+.theme-toggle {
+  --neon-color:var(--hover-neutral);
+  transition:transform .15s ease,box-shadow .2s ease,
+  border-color .2s ease,background-color .2s ease,filter .2s ease;
+}
+
+.calc-button.action-button {--neon-color:var(--hover-action);}
+.calc-button[data-action="clear"],
+.calc-button[data-scientific-action="clear"] {--neon-color:var(--hover-primary);}
+.calc-button.operation-button,
+.calc-button.scientific-button {--neon-color:var(--hover-operation);}
+.calc-button.equal-button,
+.tab-button.active,
+.probability-tab.active,
+.panel-button {--neon-color:var(--hover-primary);}
+.theme-toggle {--neon-color:var(--hover-primary);}
+.panel-title button {--neon-color:var(--hover-primary);}
+
+@media (hover:hover) and (pointer:fine) {
+  .calc-button:hover,
+  .tab-button:hover,
+  .panel-button:hover,
+  .probability-tab:hover,
+  .panel-title button:hover,
+  .theme-toggle:hover {
+    filter:brightness(1.07);
+    box-shadow:0 0 0 2px var(--neon-color),
+    0 0 10px 2px var(--neon-color),
+    0 0 22px 1px var(--neon-color);
+    transform:translateY(-1px);
+  }
+}
+
+.calc-button:focus-visible,
+.tab-button:focus-visible,
+.panel-button:focus-visible,
+.probability-tab:focus-visible,
+.panel-title button:focus-visible,
+.theme-toggle:focus-visible {
+  outline:2px solid var(--focus-color);
+  outline-offset:3px;
+  box-shadow:0 0 0 2px var(--neon-color),0 0 12px var(--neon-color);
+}
+
+input:focus-visible,select:focus-visible,textarea:focus-visible {
+  outline:2px solid var(--focus-color);
+  outline-offset:2px;
+}
+
+html[data-theme="dark"] .calc-button.operation-button,
+html[data-theme="dark"] .calc-button.scientific-button {color:#fff;}
+
+@media (max-width:500px) {
+  .topbar {gap:12px;flex-wrap:wrap;}
+  .theme-toggle {padding:9px 11px;font-size:13px;}
+}
+
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after {transition-duration:.01ms !important;animation-duration:.01ms !important;}
 }

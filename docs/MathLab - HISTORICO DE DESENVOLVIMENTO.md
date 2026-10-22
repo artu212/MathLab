@@ -144,3 +144,69 @@ Não transformar relatos anteriores em novos testes aprovados sem executar ou lo
 - Correção dos problemas identificados e retestes.
 - Publicação da versão validada em hospedagem web e testes do endereço público.
 - Preparação e ensaio da apresentação final.
+
+## Atualização — 22/10/2026
+### Melhorias de interface, usabilidade e interação
+
+**Objetivo:** aprimorar a experiência de utilização do MathLab por meio de melhorias visuais, personalização da interface e suporte adicional à navegação por teclado.
+
+### 1. Implementações realizadas
+
+**1.1. Alternância entre temas claro e escuro**
+- Implementado controle de alternância de tema no cabeçalho da aplicação.
+- Definidas configurações visuais para os modos claro e escuro.
+- Adicionado armazenamento da preferência de tema utilizando `localStorage`, permitindo sua manutenção após a atualização da página.
+
+**1.2. Efeitos visuais nos botões**
+- Implementados efeitos de contorno luminoso (neon) ao passar o cursor sobre os botões.
+- Aplicadas cores de destaque correspondentes às funções e características visuais dos controles.
+- Adicionadas transições para tornar a interação visual mais suave.
+- Considerados estados de foco para navegação por teclado.
+
+**1.3. Suporte à tecla Delete**
+- Implementado o uso da tecla `Delete` para executar a função de limpeza (`C`) nas calculadoras básica e científica.
+- Mantido o comportamento da tecla `Backspace` para remoção de caracteres.
+- Preservada a edição de campos de entrada sem interferência indevida dos atalhos da calculadora.
+
+**1.4. Ajustes de identidade visual**
+- Corrigida a referência ao arquivo de imagem da logo do MathLab.
+- Adicionada a imagem à pasta `img` do projeto.
+- Ajustado o tamanho de exibição da logo no cabeçalho.
+
+### 2. Arquivos envolvidos
+
+- `index.html` — ajustes na estrutura da interface e controle de alternância de tema.
+- `css/style.css` — estilos dos temas, efeitos neon e ajustes visuais.
+- `js/app.js` — comportamento dos temas, armazenamento da preferência e suporte à tecla `Delete`.
+- `img/mathlab-logo.jpg` — arquivo da identidade visual do projeto.
+
+### 3. Validação realizada
+
+Após a atualização dos arquivos, foi realizada uma verificação manual da aplicação no ambiente de desenvolvimento.
+
+Foram relatados como funcionais:
+- Alternância entre os temas claro e escuro.
+- Efeitos neon nos botões.
+- Atalho `Delete` para limpeza das calculadoras.
+- Exibição da logo no cabeçalho.
+- Funcionamento geral dos módulos após as alterações.
+
+**Observação:** a validação manual não substitui a bateria formal de testes funcionais e de casos extremos prevista para o encerramento do projeto.
+
+### 4. Próximas implementações previstas
+
+- Histórico de cálculos na calculadora científica.
+- Representação gráfica de funções utilizando HTML Canvas.
+- Suporte a Progressive Web App (PWA), incluindo instalação e funcionamento offline.
+
+Essas funcionalidades permanecem planejadas e não fazem parte desta atualização concluída.
+
+### 5. Situação da atualização
+
+**Implementação:** concluída.
+
+**Verificação manual:** realizada.
+
+**Registro no Git:** pendente de novo commit.
+
+**Testes formais da equipe:** pendentes.
