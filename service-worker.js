@@ -1,5 +1,5 @@
 /* MathLab — atualização de recursos online, fallback offline. */
-const CACHE_VERSION = "mathlab-static-v6";
+const CACHE_VERSION = "mathlab-static-v7";
 const APP_FILES = [
   "./", "./index.html", "./css/style.css", "./js/app.js", "./js/pwa.js",
   "./manifest.json", "./img/mathlab-logo.jpg", "./img/icon-192.png", "./img/icon-512.png"

@@ -1975,9 +1975,11 @@ document
 
         case "scalar": {
 
-          const k = Number(
-            document.getElementById("matrixScalar").value
-          );
+          const scalarInput = document.getElementById("matrixScalar");
+          if (!scalarInput.value.trim()) {
+            throw new Error("Preencha o valor do escalar.");
+          }
+          const k = Number(scalarInput.value);
 
           if (!Number.isFinite(k)) {
             throw new Error("Escalar inválido.");
@@ -2282,6 +2284,20 @@ function randomInt(min,max) {
    PROBABILIDADE
    ========================================================= */
 
+// Evita que Number("") transforme um campo obrigatório vazio em zero.
+function readRequiredNumber(id, label) {
+  const input = document.getElementById(id);
+  if (!input.value.trim()) {
+    throw new Error(`Preencha o campo ${label}.`);
+  }
+  const value = Number(input.value);
+  if (!Number.isFinite(value)) {
+    throw new Error(`${label} deve ser um número válido.`);
+  }
+  return value;
+}
+
+
 function validateProbability(value, name) {
 
   if (!Number.isFinite(value) || value < 0 || value > 1) {
@@ -2338,13 +2354,9 @@ document
 
     try {
 
-      const favorable = Number(
-        document.getElementById("probabilityFavorable").value
-      );
+      const favorable = readRequiredNumber("probabilityFavorable", "casos favoráveis");
 
-      const possible = Number(
-        document.getElementById("probabilityPossible").value
-      );
+      const possible = readRequiredNumber("probabilityPossible", "casos possíveis");
 
       if (
         !Number.isInteger(favorable) ||
@@ -2383,11 +2395,9 @@ document
 
     try {
 
-      const pA = Number(document.getElementById("probabilityA").value);
-      const pB = Number(document.getElementById("probabilityB").value);
-      const pIntersection = Number(
-        document.getElementById("probabilityIntersection").value
-      );
+      const pA = readRequiredNumber("probabilityA", "P(A)");
+      const pB = readRequiredNumber("probabilityB", "P(B)");
+      const pIntersection = readRequiredNumber("probabilityIntersection", "P(A ∩ B)");
 
       validateProbability(pA, "P(A)");
       validateProbability(pB, "P(B)");
@@ -2420,13 +2430,9 @@ document
 
     try {
 
-      const pIntersection = Number(
-        document.getElementById("conditionalIntersection").value
-      );
+      const pIntersection = readRequiredNumber("conditionalIntersection", "P(A ∩ B)");
 
-      const pB = Number(
-        document.getElementById("conditionalB").value
-      );
+      const pB = readRequiredNumber("conditionalB", "P(B)");
 
       validateProbability(pIntersection, "P(A ∩ B)");
       validateProbability(pB, "P(B)");
@@ -2461,9 +2467,9 @@ document
 
     try {
 
-      const n = Number(document.getElementById("binomialN").value);
-      const k = Number(document.getElementById("binomialK").value);
-      const p = Number(document.getElementById("binomialP").value);
+      const n = readRequiredNumber("binomialN", "n");
+      const k = readRequiredNumber("binomialK", "k");
+      const p = readRequiredNumber("binomialP", "p");
 
       validateNK(n, k);
       validateProbability(p, "p");
@@ -2472,12 +2478,23 @@ document
         throw new Error("Para esta calculadora, use n até 1000.");
       }
 
-      const combinations = Number(combinationBigInt(n, k));
-
-      const result =
-        combinations *
-        (p ** k) *
-        ((1 - p) ** (n - k));
+      // Calcula no domínio logarítmico para evitar Infinity * 0
+      // em coeficientes binomiais grandes (ex.: n=1000, k=500).
+      let result;
+      if (p === 0) {
+        result = k === 0 ? 1 : 0;
+      } else if (p === 1) {
+        result = k === n ? 1 : 0;
+      } else {
+        const smallerK = Math.min(k, n - k);
+        let logCombination = 0;
+        for (let i = 1; i <= smallerK; i++) {
+          logCombination += Math.log(n - smallerK + i) - Math.log(i);
+        }
+        const logProbability =
+          logCombination + k * Math.log(p) + (n - k) * Math.log1p(-p);
+        result = Math.min(1, Math.max(0, Math.exp(logProbability)));
+      }
 
       document.getElementById("binomialProbabilityResult").textContent =
         `P(X = ${k}) = ${probabilityText(result)}`;
@@ -2536,9 +2553,7 @@ document
       const type =
         document.getElementById("simulationType").value;
 
-      const trials = Number(
-        document.getElementById("simulationTrials").value
-      );
+      const trials = readRequiredNumber("simulationTrials", "tentativas");
 
       if (
         !Number.isInteger(trials) ||
@@ -2785,4 +2800,5 @@ updateScientificDisplay();
     try { localStorage.setItem(storageKey, nextTheme); } catch (_) { /* opcional */ }
   });
 })();
+
 
