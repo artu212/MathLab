@@ -4,8 +4,12 @@
 
 const tabs = document.querySelectorAll(".tab-button");
 const pages = document.querySelectorAll(".page");
+const ACTIVE_PAGE_KEY = "mathlab-active-page-v1";
+const availablePageNames = new Set(Array.from(pages, page => page.id));
 
 function openPage(pageName) {
+  // Ignora identificadores inválidos e preserva a navegação atual.
+  if (!availablePageNames.has(pageName)) return;
 
   tabs.forEach(tab => {
     tab.classList.toggle(
@@ -21,6 +25,11 @@ function openPage(pageName) {
     );
   });
 
+  try {
+    localStorage.setItem(ACTIVE_PAGE_KEY, pageName);
+  } catch (_) {
+    // O site continua navegável se o armazenamento estiver bloqueado.
+  }
 }
 
 tabs.forEach(tab => {
@@ -29,6 +38,25 @@ tabs.forEach(tab => {
     openPage(tab.dataset.page);
   });
 
+});
+
+// Recupera a última aba válida; para a primeira visita, abre a Básica.
+let initialPage = "calculator";
+try {
+  const storedPage = localStorage.getItem(ACTIVE_PAGE_KEY);
+  if (availablePageNames.has(storedPage)) initialPage = storedPage;
+} catch (_) {
+  // Armazenamento indisponível: mantém a página inicial padrão.
+}
+openPage(initialPage);
+
+// Restaura a aba quando a página retorna do cache de navegação do navegador.
+window.addEventListener("pageshow", event => {
+  if (!event.persisted) return;
+  try {
+    const saved = localStorage.getItem(ACTIVE_PAGE_KEY);
+    if (availablePageNames.has(saved)) openPage(saved);
+  } catch (_) { /* armazenamento opcional */ }
 });
 
 
@@ -67,6 +95,7 @@ function escapeHtml(text) {
 let expression = "";
 let currentValue = "0";
 let justCalculated = false;
+let basicRepeatOperation = null;
 
 const currentOperationDisplay =
   document.getElementById("currentOperation");
@@ -209,6 +238,49 @@ function evaluateMathExpression(expr, variables = {}) {
 function evaluateExpression(expr) {
   return evaluateMathExpression(expr);
 }
+
+// Identifica o último operador binário e seu operando para repetir o '='.
+// Ex.: 1+1 => +1; 100/2 => /2; 2^3 => ^3.
+function getRepeatOperation(expr) {
+  const tokens = tokenizeExpression(expr);
+  let lastOperator = -1;
+  for (let i = 0; i < tokens.length; i++) {
+    if (!["+", "-", "*", "/", "^"].includes(tokens[i])) continue;
+    const previous = tokens[i - 1];
+    // Ignora sinais unários, como o menos em 2*-3.
+    if (i === 0 || (typeof previous === "string" && "(+-*/^".includes(previous))) continue;
+    lastOperator = i;
+  }
+  if (lastOperator < 0 || lastOperator === tokens.length - 1) return null;
+  const operator = tokens[lastOperator];
+  const rightTokens = tokens.slice(lastOperator + 1);
+  // Reconstrói o operando sem alterar o avaliador matemático original.
+  const rightText = rightTokens.join("");
+  try {
+    const operand = evaluateMathExpression(rightText);
+    return { operator, operand };
+  } catch (_) {
+    return null;
+  }
+}
+
+function repeatMathOperation(left, repeat) {
+  const { operator, operand } = repeat;
+  if (operator === "+") return left + operand;
+  if (operator === "-") return left - operand;
+  if (operator === "*") return left * operand;
+  if (operator === "/") {
+    if (operand === 0) throw new Error("Não é possível dividir por zero.");
+    return left / operand;
+  }
+  if (operator === "^") return left ** operand;
+  throw new Error("Operação inválida.");
+}
+
+function repeatExpressionLabel(left, repeat) {
+  return `${left} ${repeat.operator} ${formatNumber(repeat.operand)}`;
+}
+
 
 
 /* =========================================================
@@ -483,7 +555,21 @@ function clearCurrentEntry() {
 
 function calculate() {
 
-  if (!expression) return;
+  if (!expression) {
+    if (!justCalculated || !basicRepeatOperation) return;
+    try {
+      const original = currentValue;
+      const value = repeatMathOperation(Number(original), basicRepeatOperation);
+      const formatted = formatNumber(value);
+      if (formatted === "Erro") throw new Error("Resultado fora do intervalo permitido.");
+      const label = repeatExpressionLabel(original, basicRepeatOperation);
+      previousOperationDisplay.textContent = label + " =";
+      currentValue = formatted;
+      updateDisplay();
+      addHistory(label, formatted);
+    } catch (error) { showCalculatorError(error.message); }
+    return;
+  }
 
   let finalExpression = expression;
 
@@ -509,6 +595,7 @@ function calculate() {
 
     updateDisplay();
 
+    basicRepeatOperation = getRepeatOperation(finalExpression);
     addHistory(finalExpression,formatted);
 
   } catch (error) {
@@ -520,30 +607,36 @@ function calculate() {
 }
 
 
-function addHistory(expressionText,result) {
+function addHistory(expressionText, result) {
 
-  const list =
-    document.getElementById("historyList");
-
-  const empty =
-    list.querySelector(".empty-message");
-
+  const list = document.getElementById("historyList");
+  const empty = list.querySelector(".empty-message");
   if (empty) empty.remove();
 
-  const item =
-    document.createElement("div");
+  // Cada item é um botão: ao clicar, reutiliza o resultado na calculadora básica.
+  const item = document.createElement("button");
+  item.type = "button";
+  item.className = "history-item basic-history-button";
+  item.title = "Reutilizar resultado: " + result;
+  item.setAttribute("aria-label", "Reutilizar resultado " + result + " de " + expressionText);
 
-  item.className = "history-item";
+  const expressionLine = document.createElement("span");
+  expressionLine.className = "history-expression";
+  expressionLine.textContent = expressionText;
 
-  item.innerHTML = `
-    <div class="history-expression">
-      ${escapeHtml(expressionText)}
-    </div>
+  const resultLine = document.createElement("span");
+  resultLine.className = "history-result";
+  resultLine.textContent = "= " + result;
 
-    <div class="history-result">
-      = ${escapeHtml(result)}
-    </div>
-  `;
+  item.append(expressionLine, resultLine);
+  item.addEventListener("click", () => {
+    expression = "";
+    currentValue = result;
+    justCalculated = true;
+    basicRepeatOperation = null;
+    previousOperationDisplay.textContent = expressionText + " =";
+    updateDisplay();
+  });
 
   list.prepend(item);
 
@@ -604,6 +697,7 @@ document
           expression = "";
           currentValue = "0";
           justCalculated = false;
+          basicRepeatOperation = null;
           previousOperationDisplay.textContent = "";
           calculatorMessage.textContent = "";
           updateDisplay();
@@ -647,6 +741,7 @@ document
 let scientificExpression = "";
 let scientificValue = "0";
 let scientificJustCalculated = false;
+let scientificRepeatOperation = null;
 
 const scientificCurrent =
   document.getElementById("scientificCurrent");
@@ -871,6 +966,7 @@ function renderScientificHistory() {
       scientificExpression = "";
       scientificValue = entry.result;
       scientificJustCalculated = true;
+      scientificRepeatOperation = null;
       scientificPrevious.textContent = entry.expression + " =";
       scientificMessage.textContent = "";
       updateScientificDisplay();
@@ -900,6 +996,7 @@ document.getElementById("clearScientificHistory").addEventListener("click", () =
 loadScientificHistory();
 
 function setScientificResult(value, operationLabel = "") {
+  scientificRepeatOperation = null;
 
   const original = scientificExpression || scientificValue;
   const historyExpression = operationLabel ? `${operationLabel}(${original})` : original;
@@ -939,6 +1036,7 @@ function factorialBigInt(n) {
 
 
 function setScientificBigIntResult(value) {
+  scientificRepeatOperation = null;
 
   scientificValue = value.toString();
   scientificExpression = "";
@@ -1093,6 +1191,7 @@ function calculateScientificPower() {
   scientificExpression = "";
   scientificJustCalculated = true;
   updateScientificDisplay();
+  scientificRepeatOperation = getRepeatOperation(original);
   addScientificHistory(original, scientificValue);
 }
 
@@ -1157,6 +1256,7 @@ document
           scientificExpression = "";
           scientificValue = "0";
           scientificJustCalculated = false;
+          scientificRepeatOperation = null;
           scientificPrevious.textContent = "";
           scientificMessage.textContent = "";
           updateScientificDisplay();
@@ -1177,6 +1277,19 @@ document
         case "calculate":
 
           try {
+            if (!scientificExpression) {
+              if (!scientificJustCalculated || !scientificRepeatOperation) break;
+              const original = scientificValue;
+              const result = repeatMathOperation(Number(original), scientificRepeatOperation);
+              const formatted = formatNumber(result);
+              if (formatted === "Erro") throw new Error("Resultado fora do intervalo permitido.");
+              const label = repeatExpressionLabel(original, scientificRepeatOperation);
+              scientificPrevious.textContent = label + " =";
+              scientificValue = formatted;
+              updateScientificDisplay();
+              addScientificHistory(label, formatted);
+              break;
+            }
 
             if (scientificExpression.includes("^")) {
               calculateScientificPower();
@@ -1197,6 +1310,7 @@ document
               scientificJustCalculated = true;
 
               updateScientificDisplay();
+              scientificRepeatOperation = getRepeatOperation(originalExpression);
               addScientificHistory(originalExpression, scientificValue);
             }
 
@@ -2561,6 +2675,7 @@ document.addEventListener("keydown", event => {
       expression = "";
       currentValue = "0";
       justCalculated = false;
+      basicRepeatOperation = null;
       previousOperationDisplay.textContent = "";
       calculatorMessage.textContent = "";
       updateDisplay();
@@ -2607,6 +2722,7 @@ document.addEventListener("keydown", event => {
       scientificExpression = "";
       scientificValue = "0";
       scientificJustCalculated = false;
+      scientificRepeatOperation = null;
       scientificPrevious.textContent = "";
       scientificMessage.textContent = "";
       updateScientificDisplay();
@@ -2669,3 +2785,4 @@ updateScientificDisplay();
     try { localStorage.setItem(storageKey, nextTheme); } catch (_) { /* opcional */ }
   });
 })();
+

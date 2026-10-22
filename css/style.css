@@ -880,3 +880,73 @@ html[data-theme="dark"] .calc-button.scientific-button {color:#fff;}
   #functionGraph {height:290px;}
   .function-graph-section {padding:10px;}
 }
+
+
+/* ATUALIZAÇÃO 4 — título e abas de navegação */
+.tabs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+}
+.tabs-title {
+  width: 100%;
+  margin: 0;
+  color: var(--text);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  line-height: 1.4;
+}
+.tabs-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+@media (max-width: 1000px) {
+  .tabs { overflow-x: visible; }
+  .tabs-buttons { justify-content: flex-start; }
+}
+
+/* Correção: cabeçalho da navegação sempre acima das abas. */
+nav.tabs { display: flex; flex-direction: column; align-items: center; }
+nav.tabs > .tabs-title { display: block; width: 100%; flex: 0 0 auto; text-align: center; margin: 0 0 6px; }
+nav.tabs > .tabs-buttons { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; }
+@media (max-width: 1000px) { nav.tabs > .tabs-buttons { justify-content: center; } }
+
+/* Histórico básico: itens clicáveis para reutilizar resultados. */
+.basic-history-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--text);
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  transition: background-color .2s ease, box-shadow .2s ease;
+}
+.basic-history-button .history-expression,
+.basic-history-button .history-result { display: block; }
+.basic-history-button:hover,
+.basic-history-button:focus-visible {
+  background: var(--surface-secondary);
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+/* MathLab — históricos com altura fixa e rolagem vertical */
+#historyList,
+#scientificHistoryList {
+  height: 320px;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}

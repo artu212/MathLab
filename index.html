@@ -34,32 +34,34 @@
 </header>
 
 
-<nav class="tabs">
+<nav class="tabs" aria-label="Calculadoras do MathLab">
+  <h2 class="tabs-title">CALCULADORAS</h2>
+  <div class="tabs-buttons">
 
-  <button class="tab-button active" data-page="calculator">
-    Calculadora
-  </button>
+    <button class="tab-button active" data-page="calculator">
+      Básica
+    </button>
 
-  <button class="tab-button" data-page="scientific">
-    Científica
-  </button>
+    <button class="tab-button" data-page="scientific">
+      Científica
+    </button>
 
-  <button class="tab-button" data-page="functions">
-    Funções
-  </button>
+    <button class="tab-button" data-page="functions">
+      Funções
+    </button>
 
-  <button class="tab-button" data-page="matrices">
-    Matrizes
-  </button>
+    <button class="tab-button" data-page="matrices">
+      Matrizes
+    </button>
 
-  <button class="tab-button" data-page="combinatorics">
-    Combinatória
-  </button>
+    <button class="tab-button" data-page="combinatorics">
+      Combinatória
+    </button>
 
-  <button class="tab-button" data-page="probability">
-    Probabilidade
-  </button>
-
+    <button class="tab-button" data-page="probability">
+      Probabilidade
+    </button>
+  </div>
 </nav>
 
 
@@ -126,7 +128,7 @@
             <button id="clearHistory">Limpar</button>
           </div>
 
-          <div id="historyList" class="history-list">
+          <div id="historyList" class="history-list" aria-live="polite">
             <p class="empty-message">Nenhum cálculo ainda.</p>
           </div>
 

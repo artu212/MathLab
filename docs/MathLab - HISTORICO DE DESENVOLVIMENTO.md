@@ -274,3 +274,132 @@ Os testes foram manuais e ainda não substituem uma revisão completa de todos o
 ### 5. Situação da atualização
 
 As três funcionalidades principais foram implementadas e passaram nos testes manuais realizados. A atualização está pronta para ser registrada no controle de versão, permanecendo pendente a revisão geral de regressão dos demais módulos.
+
+## Atualização 4 — Melhorias de navegação, histórico e PWA
+
+**Data:** 22/10/2026
+
+### 1. Melhorias implementadas
+
+**Navegação entre os módulos**
+- Adicionado o título **CALCULADORAS**, centralizado acima das abas.
+- Renomeada a aba **Calculadora** para **Básica**.
+- Implementado o armazenamento da última aba utilizada, permitindo restaurá-la após atualizar a página.
+
+**Histórico da calculadora básica**
+- Implementada a reutilização dos resultados registrados no histórico.
+- Ao selecionar um registro, o resultado retorna ao visor e pode ser utilizado em uma nova operação.
+
+**Progressive Web App (PWA)**
+- Ajustados os ícones utilizados na instalação do MathLab.
+- Atualizada a estratégia de cache do Service Worker para facilitar o carregamento das versões mais recentes dos arquivos.
+
+### 2. Validação inicial
+
+Foram verificadas manualmente as seguintes melhorias:
+- Organização visual do título e das abas.
+- Restauração da última aba após atualização da página.
+- Reutilização de resultados no histórico da calculadora básica.
+
+### 3. Testes finais
+
+A revisão completa dos seis módulos será realizada antes do próximo commit, abrangendo:
+
+- Calculadora Básica.
+- Calculadora Científica.
+- Funções e gráficos.
+- Matrizes.
+- Combinatória.
+- Probabilidade.
+- Persistência de dados, navegação e funcionamento offline.
+
+**Situação:** melhorias implementadas e em fase de validação final. Commit pendente.
+
+### Melhorias adicionais — Atualização 4
+
+**Repetição automática de operações**
+- Implementada a repetição da última operação ao pressionar sucessivamente o botão `=`.
+- Funcionalidade disponível nas calculadoras Básica e Científica.
+- Os resultados são atualizados sequencialmente e registrados no histórico.
+
+**Melhorias nos históricos**
+- Definida uma altura fixa para as áreas de histórico.
+- Adicionada rolagem vertical para consultar operações anteriores.
+- Aplicado o mesmo comportamento nas calculadoras Básica e Científica.
+
+**Validação**
+- Repetição de operações: aprovada nas duas calculadoras.
+- Histórico com tamanho fixo e rolagem: aprovado nas duas calculadoras.
+
+**Situação:** melhorias implementadas e validadas manualmente.
+
+## Atualização 4 — Melhorias de usabilidade, histórico e validação dos módulos
+
+**Data:** 22/10/2026
+
+### 1. Objetivo da atualização
+
+A Atualização 4 teve como objetivo aprimorar a experiência de utilização do MathLab, melhorar a navegação entre as calculadoras, ampliar as funcionalidades dos históricos e realizar testes de validação dos módulos matemáticos.
+
+### 2. Melhorias implementadas
+
+#### 2.1. Navegação entre calculadoras
+
+- Adicionado o título **CALCULADORAS**, centralizado acima dos botões de navegação.
+- Renomeada a aba **Calculadora** para **Básica**.
+- Implementado o armazenamento da última aba utilizada por meio do `localStorage`.
+- Ao atualizar a página, o sistema restaura automaticamente a última aba selecionada.
+
+#### 2.2. Reutilização de resultados do histórico
+
+- Implementada a reutilização de resultados na calculadora Básica.
+- Mantida a funcionalidade de reutilização de resultados na calculadora Científica.
+- Ao selecionar um registro do histórico, o resultado é transferido para o visor e pode ser utilizado em novos cálculos.
+
+#### 2.3. Repetição automática de operações
+
+- Implementada a repetição da última operação ao pressionar sucessivamente o botão `=`.
+- Funcionalidade aplicada às calculadoras Básica e Científica.
+- Cada repetição utiliza o resultado anterior como ponto de partida.
+
+**Exemplo:**
+
+`1 + 1 = 2 → 3 → 4 → 5 → 6`
+
+A funcionalidade também contempla operações de subtração, multiplicação e divisão.
+
+#### 2.4. Histórico com rolagem
+
+- Ajustada a apresentação dos históricos das calculadoras Básica e Científica.
+- Definida uma altura fixa para as áreas de histórico.
+- Implementada rolagem vertical para consultar operações anteriores.
+- Evitado o crescimento contínuo da caixa de histórico conforme novos cálculos são realizados.
+
+#### 2.5. Ajustes no PWA
+
+- Realizados ajustes nos ícones utilizados na instalação do MathLab como aplicativo.
+- Atualizada a estratégia de cache do Service Worker para facilitar a atualização dos arquivos da aplicação.
+
+### 3. Testes de validação
+
+#### 3.1. Calculadora Básica
+
+Foram realizados testes envolvendo
+
+### Encerramento da Atualização 4 — Validação final
+
+**Data:** 22/10/2026
+
+Após a implementação das melhorias, foi realizada a validação funcional dos seis módulos do MathLab.
+
+A Calculadora Científica foi submetida a dez testes, contemplando funções trigonométricas, raiz quadrada, potenciação, fatorial, logaritmos, tratamento de erros e persistência do histórico. Todos os testes foram aprovados.
+
+Também foram concluídos os testes dos módulos de Funções e Gráficos, Matrizes, Combinatória e Probabilidade, além das verificações da Calculadora Básica.
+
+O PWA passou por três testes adicionais, envolvendo funcionamento offline, persistência da aba selecionada e execução como aplicativo instalado no Windows.
+
+As funcionalidades de repetição de operações, reutilização de resultados e rolagem dos históricos também foram validadas.
+
+**Resultado:** as funcionalidades testadas apresentaram o comportamento esperado, sem falhas identificadas durante a validação.
+
+**Status da Atualização 4: CONCLUÍDA — aguardando commit e push no GitHub.**
