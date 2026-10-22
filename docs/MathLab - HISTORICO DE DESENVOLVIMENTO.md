@@ -210,3 +210,67 @@ Essas funcionalidades permanecem planejadas e não fazem parte desta atualizaç�
 **Registro no Git:** pendente de novo commit.
 
 **Testes formais da equipe:** pendentes.
+
+## Atualização 3 — Histórico científico, gráficos e PWA
+
+**Data:** 22/10/2026
+
+### 1. Funcionalidades implementadas
+
+Nesta etapa, foram adicionadas três funcionalidades ao MathLab:
+
+**Histórico da calculadora científica**
+- Registro das operações e dos resultados.
+- Possibilidade de reutilizar resultados anteriores.
+- Opção para limpar o histórico.
+- Armazenamento local para preservar os registros após atualizar a página.
+
+**Gráficos de funções matemáticas**
+- Implementação de gráficos utilizando HTML Canvas e JavaScript.
+- Representação de funções no intervalo definido pelo usuário.
+- Desenho de eixos cartesianos e grade.
+- Ajuste automático da escala.
+- Tratamento de pontos indefinidos e descontinuidades.
+
+**Progressive Web App (PWA)**
+- Criação do arquivo `manifest.json`.
+- Implementação do `service-worker.js` para armazenamento em cache.
+- Criação do arquivo `js/pwa.js` para registrar o Service Worker.
+- Adição dos ícones de instalação.
+- Suporte ao funcionamento offline após o carregamento inicial.
+
+### 2. Testes realizados
+
+Os seguintes testes foram executados manualmente no navegador:
+
+| Teste | Resultado |
+|---|---|
+| Registro de operações no histórico científico | Aprovado |
+| Persistência do histórico após atualizar a página | Aprovado |
+| Gráfico da função quadrática `x^2 - 4` | Aprovado |
+| Gráfico da função linear `2*x + 1` | Aprovado |
+| Gráfico da função racional `1/x` | Aprovado |
+| Ativação do Service Worker | Aprovado |
+| Carregamento da aplicação em modo offline | Aprovado |
+| Instalação do MathLab como aplicativo | Aprovado |
+
+### 3. Observações
+
+O MathLab foi executado utilizando o servidor local do IntelliJ IDEA (`localhost`).
+
+O funcionamento offline foi verificado por meio da simulação de ausência de conexão no Chrome DevTools.
+
+A instalação do PWA foi realizada com sucesso, abrindo o MathLab em uma janela independente.
+
+Os testes foram manuais e ainda não substituem uma revisão completa de todos os módulos.
+
+### 4. Melhorias previstas para a próxima atualização
+
+- Adicionar o título **CALCULADORAS** acima das abas de navegação.
+- Renomear a aba **Calculadora** para **Básica**.
+- Preservar a última aba utilizada após atualizar a página.
+- Ajustar o tamanho visual do ícone do PWA na barra de tarefas.
+
+### 5. Situação da atualização
+
+As três funcionalidades principais foram implementadas e passaram nos testes manuais realizados. A atualização está pronta para ser registrada no controle de versão, permanecendo pendente a revisão geral de regressão dos demais módulos.

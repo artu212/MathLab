@@ -816,3 +816,67 @@ html[data-theme="dark"] .calc-button.scientific-button {color:#fff;}
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after {transition-duration:.01ms !important;animation-duration:.01ms !important;}
 }
+
+
+/* =========================================================
+   ATUALIZAÇÃO 3 — HISTÓRICO CIENTÍFICO E GRÁFICO
+   ========================================================= */
+.scientific-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 850px) minmax(250px, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+.scientific-layout .scientific-calculator {width:100%; min-width:0;}
+.scientific-layout .side-panel {min-width:0;}
+.scientific-layout .history-list {max-height:490px; overflow-y:auto;}
+.scientific-history-entry {
+  display:block;
+  width:100%;
+  text-align:left;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+  margin-bottom:9px;
+  background:var(--surface-secondary);
+  color:var(--text);
+  cursor:pointer;
+  overflow-wrap:anywhere;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+.scientific-history-entry:hover,
+.scientific-history-entry:focus-visible {
+  border-color:var(--primary);
+  box-shadow:0 0 0 2px var(--glow);
+  outline:none;
+}
+.scientific-history-entry .history-expression,
+.scientific-history-entry .history-result {display:block;}
+.history-hint {color:var(--text-secondary);font-size:12px;line-height:1.5;}
+.function-graph-section {
+  margin-top:22px;
+  padding:18px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:var(--surface-secondary);
+}
+.graph-header {display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;}
+.graph-header h3 {margin:0 0 6px;}
+.graph-header p,.graph-status {color:var(--text-secondary);font-size:13px;line-height:1.5;}
+.graph-header p {margin:0 0 12px;}
+.graph-container {
+  width:100%;
+  overflow:hidden;
+  border-radius:12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+}
+#functionGraph {display:block;width:100%;height:350px;}
+.graph-status {margin:10px 0 0;}
+@media (max-width: 950px) {
+  .scientific-layout {grid-template-columns:1fr;}
+}
+@media (max-width: 520px) {
+  #functionGraph {height:290px;}
+  .function-graph-section {padding:10px;}
+}

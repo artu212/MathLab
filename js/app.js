@@ -822,10 +822,88 @@ function getScientificNumericValue() {
 }
 
 
-function setScientificResult(value) {
 
-  scientificPrevious.textContent =
-    scientificExpression || scientificValue;
+/* =========================================================
+   HISTÓRICO DA CALCULADORA CIENTÍFICA
+   ========================================================= */
+const SCIENTIFIC_HISTORY_KEY = "mathlab-scientific-history-v1";
+const SCIENTIFIC_HISTORY_LIMIT = 40;
+let scientificHistory = [];
+
+function loadScientificHistory() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(SCIENTIFIC_HISTORY_KEY) || "[]");
+    if (Array.isArray(parsed)) {
+      scientificHistory = parsed.filter(entry =>
+        entry && typeof entry.expression === "string" &&
+        typeof entry.result === "string" && entry.expression.length <= 300 &&
+        entry.result.length <= 300
+      ).slice(0, SCIENTIFIC_HISTORY_LIMIT);
+    }
+  } catch (_) { scientificHistory = []; }
+  renderScientificHistory();
+}
+
+function renderScientificHistory() {
+  const list = document.getElementById("scientificHistoryList");
+  if (!list) return;
+  list.replaceChildren();
+  if (!scientificHistory.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-message";
+    empty.textContent = "Nenhum cálculo ainda.";
+    list.appendChild(empty);
+    return;
+  }
+  for (const entry of scientificHistory) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "scientific-history-entry";
+    button.title = "Reutilizar resultado: " + entry.result;
+    const expression = document.createElement("span");
+    expression.className = "history-expression";
+    expression.textContent = entry.expression;
+    const result = document.createElement("span");
+    result.className = "history-result";
+    result.textContent = "= " + entry.result;
+    button.append(expression, result);
+    button.addEventListener("click", () => {
+      scientificExpression = "";
+      scientificValue = entry.result;
+      scientificJustCalculated = true;
+      scientificPrevious.textContent = entry.expression + " =";
+      scientificMessage.textContent = "";
+      updateScientificDisplay();
+    });
+    list.appendChild(button);
+  }
+}
+
+function addScientificHistory(expressionText, result) {
+  if (!expressionText || !result) return;
+  scientificHistory.unshift({
+    expression: String(expressionText).slice(0, 300),
+    result: String(result).slice(0, 300)
+  });
+  scientificHistory = scientificHistory.slice(0, SCIENTIFIC_HISTORY_LIMIT);
+  try {
+    localStorage.setItem(SCIENTIFIC_HISTORY_KEY, JSON.stringify(scientificHistory));
+  } catch (_) { /* Histórico permanece disponível nesta sessão. */ }
+  renderScientificHistory();
+}
+
+document.getElementById("clearScientificHistory").addEventListener("click", () => {
+  scientificHistory = [];
+  try { localStorage.removeItem(SCIENTIFIC_HISTORY_KEY); } catch (_) {}
+  renderScientificHistory();
+});
+loadScientificHistory();
+
+function setScientificResult(value, operationLabel = "") {
+
+  const original = scientificExpression || scientificValue;
+  const historyExpression = operationLabel ? `${operationLabel}(${original})` : original;
+  scientificPrevious.textContent = historyExpression;
 
   scientificValue =
     formatNumber(value);
@@ -834,6 +912,7 @@ function setScientificResult(value) {
   scientificJustCalculated = true;
 
   updateScientificDisplay();
+  addScientificHistory(historyExpression, scientificValue);
 
 }
 
@@ -883,7 +962,7 @@ function scientificOperation(operation) {
           getScientificNumericValue() *
           Math.PI / 180
         );
-        setScientificResult(value);
+        setScientificResult(value, "sin");
         break;
 
       case "cos":
@@ -891,7 +970,7 @@ function scientificOperation(operation) {
           getScientificNumericValue() *
           Math.PI / 180
         );
-        setScientificResult(value);
+        setScientificResult(value, "cos");
         break;
 
       case "tan":
@@ -899,7 +978,7 @@ function scientificOperation(operation) {
           getScientificNumericValue() *
           Math.PI / 180
         );
-        setScientificResult(value);
+        setScientificResult(value, "tan");
         break;
 
       case "sqrt":
@@ -912,13 +991,13 @@ function scientificOperation(operation) {
           );
         }
 
-        setScientificResult(Math.sqrt(value));
+        setScientificResult(Math.sqrt(value), "sqrt");
         break;
 
       case "square":
 
         value = getScientificNumericValue();
-        setScientificResult(value ** 2);
+        setScientificResult(value ** 2, "quadrado");
         break;
 
       case "power":
@@ -941,7 +1020,7 @@ function scientificOperation(operation) {
           );
         }
 
-        setScientificResult(Math.log10(value));
+        setScientificResult(Math.log10(value), "log");
         break;
 
       case "ln":
@@ -954,15 +1033,15 @@ function scientificOperation(operation) {
           );
         }
 
-        setScientificResult(Math.log(value));
+        setScientificResult(Math.log(value), "ln");
         break;
 
       case "pi":
-        setScientificResult(Math.PI);
+        setScientificResult(Math.PI, "π");
         break;
 
       case "e":
-        setScientificResult(Math.E);
+        setScientificResult(Math.E, "e");
         break;
 
       case "factorial":
@@ -981,17 +1060,18 @@ function scientificOperation(operation) {
         setScientificBigIntResult(
           factorialBigInt(value)
         );
+        addScientificHistory(`${value}!`, scientificValue);
 
         break;
 
       case "random":
-        setScientificResult(Math.random());
+        setScientificResult(Math.random(), "RAND");
         break;
 
       case "percentage":
 
         value = getScientificNumericValue();
-        setScientificResult(value / 100);
+        setScientificResult(value / 100, "porcentagem");
         break;
 
     }
@@ -1013,6 +1093,7 @@ function calculateScientificPower() {
   scientificExpression = "";
   scientificJustCalculated = true;
   updateScientificDisplay();
+  addScientificHistory(original, scientificValue);
 }
 
 
@@ -1105,6 +1186,7 @@ document
                   scientificExpression
                 );
 
+              const originalExpression = scientificExpression;
               scientificPrevious.textContent =
                 scientificExpression + " =";
 
@@ -1115,6 +1197,7 @@ document
               scientificJustCalculated = true;
 
               updateScientificDisplay();
+              addScientificHistory(originalExpression, scientificValue);
             }
 
           } catch(error) {
@@ -1269,9 +1352,12 @@ document
 
       document.getElementById("functionTable").innerHTML =
         html;
+      currentFunctionGraph = { expression, start, end };
+      refreshFunctionGraph();
 
     } catch(error) {
 
+      graphStatus.textContent = "Não foi possível atualizar o gráfico: " + error.message;
       showModuleMessage(
         "functionMessage",
         error.message
@@ -1281,6 +1367,166 @@ document
 
   });
 
+
+
+/* =========================================================
+   GRÁFICO DE FUNÇÕES — CANVAS 2D
+   ========================================================= */
+let currentFunctionGraph = null;
+const graphCanvas = document.getElementById("functionGraph");
+const graphStatus = document.getElementById("functionGraphStatus");
+
+function drawFunctionGraph(expression, start, end) {
+  const canvas = graphCanvas;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    graphStatus.textContent = "Canvas não é suportado neste navegador.";
+    return;
+  }
+  const bounds = canvas.getBoundingClientRect();
+  const width = Math.max(200, Math.round(bounds.width));
+  const height = Math.max(220, Math.round(bounds.height));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(width * dpr);
+  canvas.height = Math.round(height * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const style = getComputedStyle(document.documentElement);
+  const color = name => style.getPropertyValue(name).trim();
+  const fg = color("--text") || "#222";
+  const secondary = color("--text-secondary") || "#666";
+  const accent = color("--primary") || "#f0171f";
+  const surface = color("--surface") || "#fff";
+  ctx.fillStyle = surface;
+  ctx.fillRect(0, 0, width, height);
+
+  const margin = { left: 53, right: 18, top: 20, bottom: 36 };
+  const pw = width - margin.left - margin.right;
+  const ph = height - margin.top - margin.bottom;
+  const xmin = start === end ? start - 1 : start;
+  const xmax = start === end ? end + 1 : end;
+  const samples = Math.min(1200, Math.max(250, Math.round(pw * 1.5)));
+  const points = [];
+  let valid = 0;
+  for (let i = 0; i <= samples; i++) {
+    const x = xmin + (xmax - xmin) * i / samples;
+    let y = null;
+    try {
+      const value = evaluateFunction(expression, x);
+      if (Number.isFinite(value)) { y = value; valid++; }
+    } catch (_) { /* Intervalo fora do domínio: quebra a curva. */ }
+    points.push({ x, y });
+  }
+  if (!valid) {
+    graphStatus.textContent = "Nenhum ponto real válido no intervalo informado.";
+    return;
+  }
+  const ys = points.filter(p => p.y !== null).map(p => p.y).sort((a,b) => a-b);
+  // Recorte robusto para evitar que assíntotas destruam a escala.
+  const low = ys[Math.floor((ys.length - 1) * 0.02)];
+  const high = ys[Math.floor((ys.length - 1) * 0.98)];
+  let ymin = Math.min(low, 0), ymax = Math.max(high, 0);
+  if (ymin === ymax) { ymin -= 1; ymax += 1; }
+  const pad = (ymax - ymin) * 0.12;
+  ymin -= pad; ymax += pad;
+  const px = x => margin.left + (x - xmin) / (xmax - xmin) * pw;
+  const py = y => margin.top + (ymax - y) / (ymax - ymin) * ph;
+
+  ctx.font = "11px Arial, sans-serif";
+  ctx.strokeStyle = secondary;
+  ctx.fillStyle = secondary;
+  ctx.lineWidth = 0.7;
+  ctx.globalAlpha = 0.35;
+  for (let i = 0; i <= 4; i++) {
+    const gx = margin.left + pw * i / 4;
+    const gy = margin.top + ph * i / 4;
+    ctx.beginPath(); ctx.moveTo(gx, margin.top); ctx.lineTo(gx, margin.top + ph); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(margin.left, gy); ctx.lineTo(margin.left + pw, gy); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+  for (let i = 0; i <= 4; i++) {
+    const value = ymax - (ymax - ymin) * i / 4;
+    ctx.fillText(Number(value.toPrecision(3)).toString(), margin.left - 7, margin.top + ph * i / 4);
+  }
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  for (let i = 0; i <= 4; i++) {
+    const value = xmin + (xmax - xmin) * i / 4;
+    ctx.fillText(Number(value.toPrecision(3)).toString(), margin.left + pw * i / 4, margin.top + ph + 7);
+  }
+  ctx.save();
+  ctx.beginPath(); ctx.rect(margin.left, margin.top, pw, ph); ctx.clip();
+  ctx.strokeStyle = fg;
+  ctx.globalAlpha = 0.65;
+  ctx.lineWidth = 1.3;
+  if (xmin <= 0 && xmax >= 0) {
+    ctx.beginPath(); ctx.moveTo(px(0), margin.top); ctx.lineTo(px(0), margin.top + ph); ctx.stroke();
+  }
+  if (ymin <= 0 && ymax >= 0) {
+    ctx.beginPath(); ctx.moveTo(margin.left, py(0)); ctx.lineTo(margin.left + pw, py(0)); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 2.2;
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  let previous = null;
+  let segments = 0;
+  const jumpLimit = (ymax - ymin) * 0.65;
+  for (const point of points) {
+    if (point.y === null || point.y < ymin - (ymax-ymin) || point.y > ymax + (ymax-ymin)) {
+      previous = null; continue;
+    }
+    const x = px(point.x), y = py(point.y);
+    if (!previous || Math.abs(point.y - previous.y) > jumpLimit) {
+      ctx.moveTo(x,y);
+      segments++;
+    } else {
+      ctx.lineTo(x,y);
+    }
+    previous = point;
+  }
+  ctx.stroke();
+  ctx.restore();
+  graphStatus.textContent = `Gráfico de f(x) = ${expression} no intervalo [${start}, ${end}]. ${valid} amostras válidas.`;
+}
+
+function refreshFunctionGraph() {
+  if (!currentFunctionGraph) return;
+  drawFunctionGraph(currentFunctionGraph.expression,
+    currentFunctionGraph.start, currentFunctionGraph.end);
+}
+document.getElementById("redrawFunctionGraph").addEventListener("click", () => {
+  const expression = document.getElementById("functionInput").value.trim();
+  const start = Number(document.getElementById("functionStart").value);
+  const end = Number(document.getElementById("functionEnd").value);
+  if (!expression || !Number.isFinite(start) || !Number.isFinite(end) ||
+    start > end || ["functionStart","functionEnd"].some(id =>
+      document.getElementById(id).value.trim() === "")) {
+    graphStatus.textContent = "Informe uma função e um intervalo válido.";
+    return;
+  }
+  try {
+    tokenizeExpression(transformFunctionExpression(expression));
+    currentFunctionGraph = { expression, start, end };
+    refreshFunctionGraph();
+  } catch (error) { graphStatus.textContent = error.message; }
+});
+window.addEventListener("resize", () => {
+  if (document.getElementById("functions").classList.contains("active-page")) {
+    refreshFunctionGraph();
+  }
+});
+new MutationObserver(() => {
+  if (document.getElementById("functions").classList.contains("active-page")) {
+    requestAnimationFrame(refreshFunctionGraph);
+  }
+}).observe(document.getElementById("functions"), { attributes:true, attributeFilter:["class"] });
+new MutationObserver(refreshFunctionGraph).observe(document.documentElement, {
+  attributes:true, attributeFilter:["data-theme"]
+});
 
 /* =========================================================
    MATRIZES

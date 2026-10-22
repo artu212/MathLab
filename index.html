@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MathLab</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#e7e7e7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
 </head>
 
 <body>
@@ -142,69 +146,83 @@
 
   <section id="scientific" class="page">
 
-    <div class="scientific-calculator">
+    <div class="scientific-layout">
+      <div class="scientific-calculator">
 
-      <div class="scientific-display">
-        <div id="scientificPrevious" class="scientific-previous"></div>
-        <div id="scientificCurrent" class="scientific-current">0</div>
+        <div class="scientific-display">
+          <div id="scientificPrevious" class="scientific-previous"></div>
+          <div id="scientificCurrent" class="scientific-current">0</div>
+        </div>
+
+        <div id="scientificMessage" class="scientific-message"></div>
+
+
+        <div class="scientific-function-row">
+
+          <button class="calc-button scientific-button" data-scientific="sin">sin</button>
+          <button class="calc-button scientific-button" data-scientific="cos">cos</button>
+          <button class="calc-button scientific-button" data-scientific="tan">tan</button>
+          <button class="calc-button scientific-button" data-scientific="sqrt">√</button>
+          <button class="calc-button scientific-button" data-scientific="square">x²</button>
+          <button class="calc-button scientific-button" data-scientific="power">xʸ</button>
+
+          <button class="calc-button scientific-button" data-scientific="log">log</button>
+          <button class="calc-button scientific-button" data-scientific="ln">ln</button>
+          <button class="calc-button scientific-button" data-scientific="pi">π</button>
+          <button class="calc-button scientific-button" data-scientific="e">e</button>
+          <button class="calc-button scientific-button" data-scientific="factorial">n!</button>
+          <button class="calc-button scientific-button" data-scientific="random">RAND</button>
+
+        </div>
+
+
+        <div class="scientific-number-keyboard">
+
+          <button class="calc-button action-button" data-scientific-action="clear">C</button>
+          <button class="calc-button action-button" data-scientific-action="clear-entry">CE</button>
+          <button class="calc-button action-button" data-scientific-action="delete">⌫</button>
+          <button class="calc-button scientific-button" data-scientific="percentage">%</button>
+          <button class="calc-button scientific-button" data-scientific-operation="/">÷</button>
+
+          <button class="calc-button" data-scientific-number="7">7</button>
+          <button class="calc-button" data-scientific-number="8">8</button>
+          <button class="calc-button" data-scientific-number="9">9</button>
+          <button class="calc-button scientific-button" data-scientific="pi">π</button>
+          <button class="calc-button scientific-button" data-scientific-operation="*">×</button>
+
+          <button class="calc-button" data-scientific-number="4">4</button>
+          <button class="calc-button" data-scientific-number="5">5</button>
+          <button class="calc-button" data-scientific-number="6">6</button>
+          <button class="calc-button scientific-button" data-scientific="e">e</button>
+          <button class="calc-button scientific-button" data-scientific-operation="-">−</button>
+
+          <button class="calc-button" data-scientific-number="1">1</button>
+          <button class="calc-button" data-scientific-number="2">2</button>
+          <button class="calc-button" data-scientific-number="3">3</button>
+          <button class="calc-button action-button" data-scientific-action="sign">±</button>
+          <button class="calc-button scientific-button" data-scientific-operation="+">+</button>
+
+          <button class="calc-button" data-scientific-number="0">0</button>
+          <button class="calc-button" data-scientific-number=".">.</button>
+          <button class="calc-button equal-button scientific-equal-button" data-scientific-action="calculate">=</button>
+
+        </div>
+
       </div>
 
-      <div id="scientificMessage" class="scientific-message"></div>
-
-
-      <div class="scientific-function-row">
-
-        <button class="calc-button scientific-button" data-scientific="sin">sin</button>
-        <button class="calc-button scientific-button" data-scientific="cos">cos</button>
-        <button class="calc-button scientific-button" data-scientific="tan">tan</button>
-        <button class="calc-button scientific-button" data-scientific="sqrt">√</button>
-        <button class="calc-button scientific-button" data-scientific="square">x²</button>
-        <button class="calc-button scientific-button" data-scientific="power">xʸ</button>
-
-        <button class="calc-button scientific-button" data-scientific="log">log</button>
-        <button class="calc-button scientific-button" data-scientific="ln">ln</button>
-        <button class="calc-button scientific-button" data-scientific="pi">π</button>
-        <button class="calc-button scientific-button" data-scientific="e">e</button>
-        <button class="calc-button scientific-button" data-scientific="factorial">n!</button>
-        <button class="calc-button scientific-button" data-scientific="random">RAND</button>
-
-      </div>
-
-
-      <div class="scientific-number-keyboard">
-
-        <button class="calc-button action-button" data-scientific-action="clear">C</button>
-        <button class="calc-button action-button" data-scientific-action="clear-entry">CE</button>
-        <button class="calc-button action-button" data-scientific-action="delete">⌫</button>
-        <button class="calc-button scientific-button" data-scientific="percentage">%</button>
-        <button class="calc-button scientific-button" data-scientific-operation="/">÷</button>
-
-        <button class="calc-button" data-scientific-number="7">7</button>
-        <button class="calc-button" data-scientific-number="8">8</button>
-        <button class="calc-button" data-scientific-number="9">9</button>
-        <button class="calc-button scientific-button" data-scientific="pi">π</button>
-        <button class="calc-button scientific-button" data-scientific-operation="*">×</button>
-
-        <button class="calc-button" data-scientific-number="4">4</button>
-        <button class="calc-button" data-scientific-number="5">5</button>
-        <button class="calc-button" data-scientific-number="6">6</button>
-        <button class="calc-button scientific-button" data-scientific="e">e</button>
-        <button class="calc-button scientific-button" data-scientific-operation="-">−</button>
-
-        <button class="calc-button" data-scientific-number="1">1</button>
-        <button class="calc-button" data-scientific-number="2">2</button>
-        <button class="calc-button" data-scientific-number="3">3</button>
-        <button class="calc-button action-button" data-scientific-action="sign">±</button>
-        <button class="calc-button scientific-button" data-scientific-operation="+">+</button>
-
-        <button class="calc-button" data-scientific-number="0">0</button>
-        <button class="calc-button" data-scientific-number=".">.</button>
-        <button class="calc-button equal-button scientific-equal-button" data-scientific-action="calculate">=</button>
-
-      </div>
-
+      <aside class="side-panel">
+        <div class="panel-card">
+          <div class="panel-title">
+            <h2>Histórico científico</h2>
+            <button type="button" id="clearScientificHistory">Limpar</button>
+          </div>
+          <div id="scientificHistoryList" class="history-list" aria-live="polite">
+            <p class="empty-message">Nenhum cálculo ainda.</p>
+          </div>
+          <p class="history-hint">Clique em um resultado para reutilizá-lo.</p>
+        </div>
+      </aside>
     </div>
-
   </section>
 
 
@@ -258,6 +276,24 @@
       </div>
 
       <div id="functionTable" class="function-table"></div>
+
+      <section class="function-graph-section" aria-labelledby="graphTitle">
+        <div class="graph-header">
+          <div>
+            <h3 id="graphTitle">Gráfico da função</h3>
+            <p>Visualização do intervalo informado, com amostragem independente do passo da tabela.</p>
+          </div>
+          <button type="button" id="redrawFunctionGraph" class="panel-button">Redesenhar</button>
+        </div>
+        <div class="graph-container">
+          <canvas id="functionGraph" role="img" aria-label="Gráfico cartesiano da função informada">
+            Seu navegador não oferece suporte ao elemento Canvas.
+          </canvas>
+        </div>
+        <p id="functionGraphStatus" class="graph-status" role="status">
+          Calcule uma função para exibir seu gráfico.
+        </p>
+      </section>
 
     </div>
 
@@ -548,6 +584,7 @@
 
 
 <script src="js/app.js"></script>
+<script src="js/pwa.js"></script>
 
 </body>
 </html>
