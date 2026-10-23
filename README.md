@@ -12,7 +12,7 @@ O **MathLab** é uma aplicação web de matemática que reúne seis módulos de 
 
 | Módulo | Recursos principais |
 |---|---|
-| **Calculadora Básica** | Operações aritméticas, porcentagem, parênteses, alteração de sinal, teclado e histórico reutilizável. |
+| **Calculadora** | Operações aritméticas, porcentagem, parênteses, alteração de sinal, teclado e histórico reutilizável. |
 | **Calculadora Científica** | Trigonometria, potências, raízes, logaritmos, constantes matemáticas, fatorial, números aleatórios e histórico. |
 | **Funções** | Avaliação de expressões f(x), tabela de valores e gráfico cartesiano em HTML Canvas. |
 | **Matrizes** | Soma, subtração, multiplicação, multiplicação por escalar, transposta, determinante e inversa, respeitando as condições matemáticas de cada operação. |
