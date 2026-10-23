@@ -4,7 +4,8 @@
 **Prazo acadêmico:** 30/11/2026  
 **Atualização:** 23/10/2026  
 **Repositório:** https://github.com/artu212/MathLab  
-**Aplicação publicada:** https://artu212.github.io/MathLab/
+**Aplicação principal:** https://mathlab-calculadora.netlify.app/  
+**Hospedagem alternativa:** https://artu212.github.io/MathLab/
 
 ## 1. Concepção e definição do escopo
 
@@ -116,3 +117,26 @@ Com o objetivo de disponibilizar um endereço mais curto e gratuito para o MathL
 - **GitHub:** a seção `About` do repositório foi atualizada com descrição, tecnologias e novo endereço.
 
 Esta entrada documenta a hospedagem e a apresentação do repositório, sem implicar alteração no código das calculadoras. A revisão do README e dos documentos de acompanhamento deve ser enviada em commit próprio.
+
+
+## 12. Atualização 7.5 — padronização dos ícones e identidade visual (23/10/2026)
+
+**Responsável pela integração:** Arthur Costa.  
+**Commit publicado na branch `master`:** `fb38990` — *Atualizacao 7.5: padronizacao dos icones e identidade visual*.
+
+**Objetivo:** melhorar a apresentação da marca MathLab no cabeçalho, nas abas dos navegadores e na instalação como aplicativo (PWA), especialmente na tela inicial do iPhone.
+
+**Alterações implementadas:**
+
+- Organizado um conjunto de imagens em diferentes resoluções na pasta `img/`, mantendo temporariamente os arquivos antigos para compatibilidade.
+- Alterada a referência da logo do cabeçalho no `index.html` para `img/logo_cabecalho.png`.
+- Configurado o favicon `img/favicon_32.png` e o `apple-touch-icon` de 180 × 180 pixels para iOS.
+- Atualizado o `manifest.json` com ícones convencionais (`icone_app_192.png` e `icone_app_512.png`) e adaptáveis (`icone_maskable_192.png` e `icone_maskable_512.png`).
+- Atualizado o `service-worker.js` para o cache `mathlab-static-v7-5`, incluindo os recursos visuais usados pela aplicação.
+- Preservada a lógica matemática existente; esta etapa foi dedicada à identidade visual e aos recursos de instalação.
+
+**Versionamento:** o commit local foi criado inicialmente com o identificador `5a617ae`. O primeiro envio foi recusado porque a branch remota continha alterações mais recentes. Após `git pull --rebase origin master`, a sincronização terminou sem conflitos e o `git push origin master` foi concluído, publicando a atualização com o identificador `fb38990`.
+
+**Validação observada:** a nova logo apareceu no cabeçalho durante a verificação local, e o responsável confirmou visualmente o novo ícone do MathLab na tela inicial do iPhone. A evidência confirma a apresentação do ícone, mas não constitui teste oficial de todos os módulos nem comprova uma nova rodada completa de testes offline.
+
+**Situação após a 7.5:** a padronização visual está integrada e versionada. Continuam pendentes os testes oficiais da equipe com evidências, a consolidação do relatório técnico e a apresentação acadêmica.

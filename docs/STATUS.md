@@ -5,11 +5,11 @@
 **Aplicação principal:** https://mathlab-calculadora.netlify.app/  
 **Hospedagem alternativa:** https://artu212.github.io/MathLab/  
 **Branch:** `master`  
-**Último commit confirmado nesta atualização:** `d21260d`
+**Último commit confirmado nesta atualização:** `fb38990` (Atualização 7.5, após rebase)
 
 ## Resumo executivo
 
-O **MathLab está desenvolvido, revisado e publicado no Netlify e no GitHub Pages**, incluindo as atualizações 7.3 e 7.4. Os seis módulos foram verificados informalmente na versão online e funcionaram nos testes internos realizados. A etapa seguinte é a **execução e documentação dos testes oficiais pelos integrantes designados**, seguida da consolidação do relatório técnico e da preparação da apresentação.
+O **MathLab está desenvolvido, revisado e publicado no Netlify e no GitHub Pages**, incluindo as atualizações 7.3, 7.4 e 7.5. Os seis módulos foram verificados informalmente na versão online e funcionaram nos testes internos realizados. A etapa seguinte é a **execução e documentação dos testes oficiais pelos integrantes designados**, seguida da consolidação do relatório técnico e da preparação da apresentação.
 
 ## Andamento das entregas
 
@@ -20,17 +20,18 @@ O **MathLab está desenvolvido, revisado e publicado no Netlify e no GitHub Page
 | Melhorias de interface e usabilidade | Concluídas | Temas, atalhos, históricos, vírgula decimal, navegação, gráficos e ajuste de duplo toque no celular. |
 | Atualização 7.3 | Testada e publicada | Persistência após F5, restauração de padrões, ajustes de teclado e controles de gráfico. Commit `d88d40c`. |
 | Atualização 7.4 | Testada e publicada | `touch-action: manipulation` para evitar zoom por duplo toque nos botões; confirmação em celular. Commit `d21260d`. |
-| Recursos de PWA | Implementados | Manifest, Service Worker, cache e suporte offline. |
+| Atualização 7.5 | Publicada; ícone validado no iPhone | Identidade visual, favicon, `apple-touch-icon`, ícones PWA e cache `mathlab-static-v7-5`. Commit `fb38990`. |
+| Recursos de PWA | Implementados | Manifest, Service Worker, cache e suporte offline; novo ícone confirmado na tela inicial do iPhone. |
 | Auditoria dos arquivos principais | Concluída | Revisados HTML, CSS, JavaScript, registro PWA, Service Worker e manifesto. |
 | Correções finais | Concluídas | Validações de campos e estabilidade da distribuição binomial; versão do cache atualizada. |
-| Commit e push no GitHub | Concluídos | Repositório sincronizado e árvore de trabalho limpa, conforme `git status` informado posteriormente. |
+| Commit e push no GitHub | Concluídos | Atualização 7.5 enviada à branch `master` após sincronização por rebase; commit `fb38990`. |
 | Publicação no GitHub Pages | Concluída | O site carregou pelo endereço público. |
 | Publicação no Netlify | Concluída | Deploy publicado a partir da branch `master`; novo endereço confirmado em funcionamento. |
 | Visibilidade do projeto no Netlify | Configurada como pública | Alteração realizada no painel; conferir acesso externo em aba anônima. |
 | Verificações internas na versão publicada | Realizadas | O responsável confirmou funcionamento dos seis módulos. |
 | Testes oficiais da equipe | **Pendentes** | Não confundir com as verificações internas. |
 | Evidências e documentação formal dos testes | **Pendentes** | Registrar entradas, resultados esperados/obtidos e responsáveis. |
-| README e documentos de acompanhamento | Atualizados anteriormente | Preparada nova revisão para registrar o endereço Netlify; commit desta revisão ainda pendente. |
+| README e documentos de acompanhamento | Revisão 7.5 preparada | Esta revisão registra a padronização visual e o novo commit; ainda precisa ser versionada e enviada ao GitHub. |
 | Relatório técnico em PDF | **Pendente** | Requisito acadêmico de 5 a 10 páginas. |
 | Apresentação e demonstração | **Pendentes** | Preparação para exposição de 10 a 15 minutos. |
 
@@ -55,9 +56,13 @@ O **MathLab está desenvolvido, revisado e publicado no Netlify e no GitHub Page
 
 A distribuição registra responsabilidades previstas; a conclusão depende da entrega efetiva de cada participante.
 
+## Verificação da Atualização 7.5
+
+Em 23/10/2026, a nova logo do cabeçalho foi confirmada na aplicação durante a configuração. O novo ícone do MathLab também foi confirmado visualmente na tela inicial de um iPhone após a atualização e reinstalação do atalho. O commit `fb38990` foi enviado à branch `master` sem conflitos após o rebase. A confirmação do ícone não equivale a uma nova bateria de testes funcionais dos seis módulos.
+
 ## Próximos passos
 
-1. Versionar esta revisão documental com o endereço oficial do Netlify.
+1. Versionar esta revisão documental da Atualização 7.5 no GitHub.
 2. Executar os testes oficiais nos seis módulos, preferencialmente na versão publicada.
 3. Documentar casos de teste, entradas, saídas esperadas e obtidas, responsáveis e evidências.
 4. Corrigir eventuais falhas encontradas e repetir os testes afetados.

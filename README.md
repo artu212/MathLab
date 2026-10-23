@@ -33,6 +33,7 @@ O módulo de **Probabilidade** foi definido como diferencial do projeto.
 - Controles separados para gerar tabela, desenhar e limpar gráficos em Funções.
 - Prevenção de zoom por duplo toque nos botões em navegadores móveis compatíveis (`touch-action: manipulation`).
 - Suporte a **Progressive Web App (PWA)**, com instalação e acesso offline após o armazenamento inicial dos arquivos.
+- Identidade visual padronizada com favicon, ícone para a tela inicial do iPhone e ícones PWA convencionais e adaptáveis (*maskable*).
 
 ## Tecnologias
 
@@ -72,8 +73,14 @@ MathLab/
 │   └── pwa.js
 ├── img/
 │   ├── mathlab-logo.jpg
-│   ├── icon-192.png
-│   └── icon-512.png
+│   ├── logo_cabecalho.png
+│   ├── favicon_32.png
+│   ├── favicon.ico
+│   ├── icone_app_180.png
+│   ├── icone_app_192.png
+│   ├── icone_app_512.png
+│   ├── icone_maskable_192.png
+│   └── icone_maskable_512.png
 ├── manifest.json
 └── service-worker.js
 ```
@@ -87,6 +94,7 @@ O MathLab está publicado no Netlify, conectado ao repositório GitHub e à bran
 - **7.3:** persistência entre recargas, ajustes nos teclados, vírgula decimal, restauração de padrões e controles independentes do gráfico. Alterações submetidas e testes internos relatados como aprovados. Commit confirmado: `d88d40c`.
 - **Hospedagem no Netlify:** publicação em `mathlab-calculadora.netlify.app`, com integração ao GitHub.
 - **7.4:** correção do zoom indesejado por duplo toque em botões no celular, com `touch-action: manipulation`. Funcionamento confirmado em teste no celular. Commit confirmado: `d21260d`.
+- **7.5:** padronização dos ícones e da identidade visual; nova logo no cabeçalho, favicon, `apple-touch-icon`, ícones PWA normais e *maskable*, e atualização do cache para `mathlab-static-v7-5`. O novo ícone foi confirmado visualmente na tela inicial do iPhone. Commit publicado após rebase: `fb38990`.
 
 ## Estado do projeto e testes
 
