@@ -103,3 +103,16 @@ Permanecem pendentes:
 
 Em **23/10/2026**, as atualizações 7.3 e 7.4 foram enviadas à branch `master` e testadas informalmente. Permanecem as atividades acadêmicas de testes oficiais com evidências, relatório técnico e apresentação, conforme a organização da equipe.
 
+
+## 11. Publicação no Netlify e atualização do endereço oficial (23/10/2026)
+
+Com o objetivo de disponibilizar um endereço mais curto e gratuito para o MathLab, foi criada uma publicação no Netlify, conectada ao repositório GitHub e à branch `master`.
+
+- **Endereço principal:** https://mathlab-calculadora.netlify.app/
+- **Endereço alternativo preservado:** https://artu212.github.io/MathLab/
+- **Publicação:** o painel do Netlify apresentou status `Published`.
+- **Verificação:** o responsável informou que a aplicação funcionou no novo endereço.
+- **Visibilidade:** o projeto foi alterado para público no painel do Netlify.
+- **GitHub:** a seção `About` do repositório foi atualizada com descrição, tecnologias e novo endereço.
+
+Esta entrada documenta a hospedagem e a apresentação do repositório, sem implicar alteração no código das calculadoras. A revisão do README e dos documentos de acompanhamento deve ser enviada em commit próprio.

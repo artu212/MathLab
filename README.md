@@ -2,7 +2,9 @@
 
 O **MathLab** é uma aplicação web de matemática que reúne seis módulos de cálculo em uma interface única. O projeto foi desenvolvido com **HTML, CSS e JavaScript**, com foco em praticidade, organização e acesso pelo navegador.
 
-**Acesse a aplicação:** https://artu212.github.io/MathLab/
+**Aplicação principal (Netlify):** https://mathlab-calculadora.netlify.app/
+
+**Hospedagem alternativa (GitHub Pages):** https://artu212.github.io/MathLab/
 
 **Código-fonte:** https://github.com/artu212/MathLab
 
@@ -76,16 +78,21 @@ MathLab/
 └── service-worker.js
 ```
 
+## Hospedagem
+
+O MathLab está publicado no Netlify, conectado ao repositório GitHub e à branch `master`. O GitHub Pages permanece como endereço alternativo. O novo endereço foi aberto e o funcionamento da aplicação foi confirmado após a publicação. O acesso público foi habilitado no painel do Netlify; recomenda-se confirmar o acesso em janela anônima.
+
 ## Atualizações recentes (23/10/2026)
 
 - **7.3:** persistência entre recargas, ajustes nos teclados, vírgula decimal, restauração de padrões e controles independentes do gráfico. Alterações submetidas e testes internos relatados como aprovados. Commit confirmado: `d88d40c`.
+- **Hospedagem no Netlify:** publicação em `mathlab-calculadora.netlify.app`, com integração ao GitHub.
 - **7.4:** correção do zoom indesejado por duplo toque em botões no celular, com `touch-action: manipulation`. Funcionamento confirmado em teste no celular. Commit confirmado: `d21260d`.
 
 ## Estado do projeto e testes
 
 Os seis módulos estão implementados e foram verificados internamente, inclusive na versão hospedada. **A bateria oficial de testes da equipe e seu registro de evidências ainda estão pendentes.** As verificações de desenvolvimento não são apresentadas como resultados oficiais.
 
-Consulte [`STATUS.md`](STATUS.md) para o andamento da entrega e [`MathLab - HISTORICO DE DESENVOLVIMENTO.md`](MathLab%20-%20HISTORICO%20DE%20DESENVOLVIMENTO.md) para um resumo das etapas do projeto.
+Consulte [`STATUS.md`](docs/STATUS.md) para o andamento da entrega e [`MathLab - HISTORICO DE DESENVOLVIMENTO.md`](docs/MathLab%20-%20HISTORICO%20DE%20DESENVOLVIMENTO.md) para um resumo das etapas do projeto.
 
 ## Equipe e organização
 
