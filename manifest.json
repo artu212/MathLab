@@ -1,3 +1,4 @@
+
 {
   "id": "./",
   "name": "MathLab — Calculadora Matemática",
@@ -11,16 +12,28 @@
   "theme_color": "#f0171f",
   "icons": [
     {
-      "src": "img/icon-192.png",
+      "src": "img/icone_app_192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "img/icon-512.png",
+      "src": "img/icone_app_512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "img/icone_maskable_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "img/icone_maskable_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
