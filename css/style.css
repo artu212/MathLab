@@ -967,3 +967,8 @@ nav.tabs > .tabs-buttons { display: flex; flex-wrap: wrap; justify-content: cent
 /* Atualização 7.2 — igualdade ocupa as duas colunas finais em ambos os teclados. */
 .calculator-keyboard .wide-equal-button,
 .scientific-number-keyboard .scientific-equal-button { grid-column: span 2; }
+
+/* Evita zoom por duplo toque nos botões */
+button {
+  touch-action: manipulation;
+}
