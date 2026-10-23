@@ -1,14 +1,14 @@
 # STATUS — MathLab
 
-**Atualizado em:** 22/10/2026  
+**Atualizado em:** 23/10/2026  
 **Repositório:** https://github.com/artu212/MathLab  
 **Aplicação:** https://artu212.github.io/MathLab/  
 **Branch:** `master`  
-**Último commit confirmado nesta atualização:** `293e23a`
+**Último commit confirmado nesta atualização:** `d21260d`
 
 ## Resumo executivo
 
-O **MathLab está desenvolvido, revisado e publicado no GitHub Pages**. Os seis módulos foram verificados informalmente na versão online e funcionaram nos testes internos realizados. A etapa seguinte é a **execução e documentação dos testes oficiais pelos integrantes designados**, seguida da consolidação do relatório técnico e da preparação da apresentação.
+O **MathLab está desenvolvido, revisado e publicado no GitHub Pages**, incluindo as atualizações 7.3 e 7.4. Os seis módulos foram verificados informalmente na versão online e funcionaram nos testes internos realizados. A etapa seguinte é a **execução e documentação dos testes oficiais pelos integrantes designados**, seguida da consolidação do relatório técnico e da preparação da apresentação.
 
 ## Andamento das entregas
 
@@ -16,16 +16,18 @@ O **MathLab está desenvolvido, revisado e publicado no GitHub Pages**. Os seis 
 |---|---|---|
 | Definição de proposta e escopo | Concluída | Seis módulos definidos; Probabilidade é o diferencial. |
 | Implementação dos seis módulos | Concluída | Básica, Científica, Funções, Matrizes, Combinatória e Probabilidade. |
-| Melhorias de interface e usabilidade | Concluídas | Temas, atalhos, históricos, navegação e gráficos. |
+| Melhorias de interface e usabilidade | Concluídas | Temas, atalhos, históricos, vírgula decimal, navegação, gráficos e ajuste de duplo toque no celular. |
+| Atualização 7.3 | Testada e publicada | Persistência após F5, restauração de padrões, ajustes de teclado e controles de gráfico. Commit `d88d40c`. |
+| Atualização 7.4 | Testada e publicada | `touch-action: manipulation` para evitar zoom por duplo toque nos botões; confirmação em celular. Commit `d21260d`. |
 | Recursos de PWA | Implementados | Manifest, Service Worker, cache e suporte offline. |
 | Auditoria dos arquivos principais | Concluída | Revisados HTML, CSS, JavaScript, registro PWA, Service Worker e manifesto. |
 | Correções finais | Concluídas | Validações de campos e estabilidade da distribuição binomial; versão do cache atualizada. |
-| Commit e push no GitHub | Concluídos | `293e23a` enviado à `master`; árvore de trabalho limpa na confirmação. |
+| Commit e push no GitHub | Concluídos | `d21260d` enviado à `master` com sucesso; não houve confirmação posterior do estado da árvore de trabalho. |
 | Publicação no GitHub Pages | Concluída | O site carregou pelo endereço público. |
 | Verificações internas na versão publicada | Realizadas | O responsável confirmou funcionamento dos seis módulos. |
 | Testes oficiais da equipe | **Pendentes** | Não confundir com as verificações internas. |
 | Evidências e documentação formal dos testes | **Pendentes** | Registrar entradas, resultados esperados/obtidos e responsáveis. |
-| README | Preparado nesta atualização documental | Deve ser adicionado ao repositório. |
+| README e documentos de acompanhamento | Revisão preparada | Registrar as atualizações 7.3 e 7.4 e enviar em commit documental. |
 | Relatório técnico em PDF | **Pendente** | Requisito acadêmico de 5 a 10 páginas. |
 | Apresentação e demonstração | **Pendentes** | Preparação para exposição de 10 a 15 minutos. |
 
@@ -52,7 +54,7 @@ A distribuição registra responsabilidades previstas; a conclusão depende da e
 
 ## Próximos passos
 
-1. Adicionar e versionar os arquivos de documentação (`README.md`, `STATUS.md` e histórico resumido).
+1. Revisar e versionar as atualizações de documentação (`README.md`, `STATUS.md` e histórico resumido).
 2. Executar os testes oficiais nos seis módulos, preferencialmente na versão publicada.
 3. Documentar casos de teste, entradas, saídas esperadas e obtidas, responsáveis e evidências.
 4. Corrigir eventuais falhas encontradas e repetir os testes afetados.

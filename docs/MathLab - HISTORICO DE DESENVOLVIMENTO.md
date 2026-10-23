@@ -2,7 +2,7 @@
 
 **Início informado:** 01/10/2026  
 **Prazo acadêmico:** 30/11/2026  
-**Atualização:** 22/10/2026  
+**Atualização:** 23/10/2026  
 **Repositório:** https://github.com/artu212/MathLab  
 **Aplicação publicada:** https://artu212.github.io/MathLab/
 
@@ -75,3 +75,31 @@ Permanecem pendentes:
 4. **Apresentação de 10 a 15 minutos**, com demonstração da aplicação.
 
 **Nota sobre as evidências:** as etapas iniciais são uma reconstrução resumida a partir dos registros do projeto; não foram atribuídas datas individuais nem commits não confirmados. As verificações realizadas durante o desenvolvimento não devem ser apresentadas como testes oficiais da equipe.
+
+## 8. Atualização 7.3 — persistência e melhorias de interface (23/10/2026)
+
+**Commit confirmado:** `d88d40c` (branch `master`).
+
+- Ampliada a persistência de dados após recarregar a página, abrangendo os seis módulos.
+- Incluídos controles para restaurar padrões nos módulos Funções, Matrizes, Combinatória e Probabilidade.
+- Reorganizados os teclados das calculadoras Básica e Científica.
+- Ajustado o separador decimal exibido e digitado para vírgula nas calculadoras.
+- Separadas as ações de calcular tabela, desenhar gráfico e limpar gráfico no módulo Funções.
+- Realizada bateria de testes internos; o responsável relatou aprovação antes do commit.
+
+**Observação:** os testes internos relatados não substituem o registro formal de testes da equipe.
+
+## 9. Atualização 7.4 — usabilidade em celulares (23/10/2026)
+
+**Commit confirmado:** `d21260d` (branch `master`).
+
+**Problema observado:** ao tocar rapidamente nos botões da calculadora no celular, o navegador interpretava a sequência como duplo toque para ampliar a página, atrapalhando a digitação.
+
+**Correção aplicada:** adicionada ao CSS a regra `button { touch-action: manipulation; }`, que evita o zoom por duplo toque nos botões em navegadores compatíveis, preservando a possibilidade de zoom por pinça.
+
+**Validação:** após a publicação no GitHub Pages, o responsável confirmou que o zoom indesejado deixou de ocorrer no celular. Não foi necessário novo commit para essa verificação.
+
+## 10. Situação após as atualizações
+
+Em **23/10/2026**, as atualizações 7.3 e 7.4 foram enviadas à branch `master` e testadas informalmente. Permanecem as atividades acadêmicas de testes oficiais com evidências, relatório técnico e apresentação, conforme a organização da equipe.
+
