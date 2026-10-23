@@ -76,6 +76,10 @@ function formatNumber(number) {
 
 }
 
+function decimalParaExibicao(valor) {
+  return String(valor).replaceAll(".", ",");
+}
+
 function escapeHtml(text) {
 
   return String(text)
@@ -87,6 +91,17 @@ function escapeHtml(text) {
 
 }
 
+
+// Exibe vírgula nos históricos e nas operações anteriores sem alterar o parser.
+function observarSeparadorDecimal(elemento) {
+  const ajustar = () => {
+    const texto = elemento.textContent;
+    const convertido = decimalParaExibicao(texto);
+    if (texto !== convertido) elemento.textContent = convertido;
+  };
+  new MutationObserver(ajustar).observe(elemento, { childList: true, characterData: true, subtree: true });
+  ajustar();
+}
 
 /* =========================================================
    CALCULADORA BÁSICA
@@ -107,6 +122,8 @@ const calculatorMessage =
   document.getElementById("calculatorMessage");
 
 
+observarSeparadorDecimal(previousOperationDisplay);
+
 function showCalculatorError(message) {
 
   calculatorMessage.textContent = message;
@@ -121,7 +138,7 @@ function showCalculatorError(message) {
 function updateDisplay() {
 
   currentOperationDisplay.textContent =
-    expression || currentValue || "0";
+    decimalParaExibicao(expression || currentValue || "0");
 
 }
 
@@ -622,16 +639,16 @@ function addHistory(expressionText, result) {
 
   const expressionLine = document.createElement("span");
   expressionLine.className = "history-expression";
-  expressionLine.textContent = expressionText;
+  expressionLine.textContent = decimalParaExibicao(expressionText);
 
   const resultLine = document.createElement("span");
   resultLine.className = "history-result";
-  resultLine.textContent = "= " + result;
+  resultLine.textContent = "= " + decimalParaExibicao(result);
 
   item.append(expressionLine, resultLine);
   item.addEventListener("click", () => {
     expression = "";
-    currentValue = result;
+    currentValue = String(result).replaceAll(",", ".");
     justCalculated = true;
     basicRepeatOperation = null;
     previousOperationDisplay.textContent = expressionText + " =";
@@ -661,7 +678,7 @@ document
 
       const value = button.dataset.number;
 
-      value === "."
+      value === ","
         ? addDecimal()
         : addNumber(value);
 
@@ -753,6 +770,8 @@ const scientificMessage =
   document.getElementById("scientificMessage");
 
 
+observarSeparadorDecimal(scientificPrevious);
+
 function showScientificError(message) {
 
   scientificMessage.textContent = message;
@@ -767,9 +786,9 @@ function showScientificError(message) {
 function updateScientificDisplay() {
 
   scientificCurrent.textContent =
-    scientificExpression ||
-    scientificValue ||
-    "0";
+    decimalParaExibicao(scientificExpression ||
+      scientificValue ||
+      "0");
 
 }
 
@@ -957,10 +976,10 @@ function renderScientificHistory() {
     button.title = "Reutilizar resultado: " + entry.result;
     const expression = document.createElement("span");
     expression.className = "history-expression";
-    expression.textContent = entry.expression;
+    expression.textContent = decimalParaExibicao(entry.expression);
     const result = document.createElement("span");
     result.className = "history-result";
-    result.textContent = "= " + entry.result;
+    result.textContent = "= " + decimalParaExibicao(entry.result);
     button.append(expression, result);
     button.addEventListener("click", () => {
       scientificExpression = "";
@@ -1205,7 +1224,7 @@ document
       const value =
         button.dataset.scientificNumber;
 
-      value === "."
+      value === ","
         ? scientificDecimal()
         : scientificAddNumber(value);
 
@@ -1466,12 +1485,9 @@ document
 
       document.getElementById("functionTable").innerHTML =
         html;
-      currentFunctionGraph = { expression, start, end };
-      refreshFunctionGraph();
+      // O cálculo atualiza somente a tabela; o gráfico é opcional.
 
     } catch(error) {
-
-      graphStatus.textContent = "Não foi possível atualizar o gráfico: " + error.message;
       showModuleMessage(
         "functionMessage",
         error.message
@@ -1612,7 +1628,7 @@ function refreshFunctionGraph() {
   drawFunctionGraph(currentFunctionGraph.expression,
     currentFunctionGraph.start, currentFunctionGraph.end);
 }
-document.getElementById("redrawFunctionGraph").addEventListener("click", () => {
+document.getElementById("drawFunctionGraph").addEventListener("click", () => {
   const expression = document.getElementById("functionInput").value.trim();
   const start = Number(document.getElementById("functionStart").value);
   const end = Number(document.getElementById("functionEnd").value);
@@ -1627,6 +1643,13 @@ document.getElementById("redrawFunctionGraph").addEventListener("click", () => {
     currentFunctionGraph = { expression, start, end };
     refreshFunctionGraph();
   } catch (error) { graphStatus.textContent = error.message; }
+});
+// Limpa apenas o gráfico, sem apagar a expressão ou a tabela calculada.
+document.getElementById("clearFunctionGraph").addEventListener("click", () => {
+  currentFunctionGraph = null;
+  const context = graphCanvas.getContext("2d");
+  if (context) context.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+  graphStatus.textContent = 'Gráfico limpo. Clique em "Desenhar gráfico" para criar outro.';
 });
 window.addEventListener("resize", () => {
   if (document.getElementById("functions").classList.contains("active-page")) {
@@ -2638,7 +2661,7 @@ document.addEventListener("keydown", event => {
       return;
     }
 
-    if (key === ".") {
+    if (key === ",") {
       addDecimal();
       event.preventDefault();
       return;
@@ -2707,7 +2730,7 @@ document.addEventListener("keydown", event => {
       return;
     }
 
-    if (key === ".") {
+    if (key === ",") {
       scientificDecimal();
       event.preventDefault();
       return;
@@ -2802,3 +2825,168 @@ updateScientificDisplay();
 })();
 
 
+
+
+
+/* =========================================================
+   ATUALIZAÇÃO 7 — PERSISTÊNCIA E RESTAURAÇÃO POR MÓDULO
+   ========================================================= */
+(function initializeModulePersistence() {
+  const prefix = "mathlab-state-v7-";
+  const modules = ["calculator", "scientific", "functions", "matrices", "combinatorics", "probability"];
+  const outputs = {
+    functions: ["functionTable", "functionGraphStatus"],
+    matrices: ["matrixResult"],
+    combinatorics: ["combinatoricsResult"],
+    probability: ["simpleProbabilityResult", "unionProbabilityResult", "conditionalProbabilityResult", "binomialProbabilityResult", "simulationProbabilityResult"]
+  };
+  const defaultFields = {};
+  for (const name of modules) {
+    const root = document.getElementById(name);
+    defaultFields[name] = Array.from(root.querySelectorAll("input,select,textarea"))
+      .filter(el => el.id).map(el => ({ id: el.id, value: el.value }));
+  }
+  let restoring = false;
+  function storageSet(name, data) {
+    try { localStorage.setItem(prefix + name, JSON.stringify(data)); } catch (_) { /* opcional */ }
+  }
+  function storageGet(name) {
+    try { return JSON.parse(localStorage.getItem(prefix + name) || "null"); } catch (_) { return null; }
+  }
+  function fieldsOf(name) {
+    return Array.from(document.getElementById(name).querySelectorAll("input,select,textarea"))
+      .filter(el => el.id).map(el => ({ id: el.id, value: el.value }));
+  }
+  function snapshot(name) {
+    if (restoring) return;
+    const data = { fields: fieldsOf(name) };
+    if (name === "calculator") {
+      data.basic = { expression, currentValue, justCalculated, basicRepeatOperation,
+        previous: previousOperationDisplay.textContent };
+      data.history = Array.from(document.querySelectorAll("#historyList .basic-history-button"))
+        .slice(0, 40).map(el => ({ expression: el.querySelector(".history-expression")?.textContent || "",
+          result: (el.querySelector(".history-result")?.textContent || "").replace(/^=\s*/, "") }));
+    } else if (name === "scientific") {
+      data.scientific = { scientificExpression, scientificValue, scientificJustCalculated,
+        scientificRepeatOperation, previous: scientificPrevious.textContent };
+    } else {
+      data.results = {};
+      for (const id of outputs[name] || []) {
+        const el = document.getElementById(id);
+        if (el) data.results[id] = el.innerHTML.slice(0, 150000);
+      }
+      if (name === "functions") data.graph = currentFunctionGraph;
+      if (name === "probability") data.activeProbability = document.querySelector(".probability-tab.active")?.dataset.probabilitySection;
+    }
+    storageSet(name, data);
+  }
+  function applyFields(fields) {
+    if (!Array.isArray(fields)) return;
+    for (const field of fields) {
+      if (!field || typeof field.id !== "string" || typeof field.value !== "string") continue;
+      const el = document.getElementById(field.id);
+      if (el && (el.matches("input,select,textarea"))) el.value = field.value.slice(0, 10000);
+    }
+  }
+  function restore(name) {
+    const data = storageGet(name);
+    if (!data || !Array.isArray(data.fields)) return;
+    restoring = true;
+    try {
+      if (name === "matrices") {
+        applyFields(data.fields.filter(field => /^(matrix[AB](Rows|Cols))$/.test(field.id)));
+        try { createMatrixInputs(); } catch (_) { /* mantém os campos existentes */ }
+      }
+      applyFields(data.fields);
+      if (name === "matrices") {
+        document.getElementById("scalarContainer").style.display =
+          document.getElementById("matrixOperation").value === "scalar" ? "flex" : "none";
+      }
+      if (name === "combinatorics") updateCombinatoricsForm();
+      if (name === "calculator") {
+        if (data.basic && typeof data.basic.currentValue === "string") {
+          expression = data.basic.expression || "";
+          currentValue = data.basic.currentValue;
+          justCalculated = Boolean(data.basic.justCalculated);
+          basicRepeatOperation = data.basic.basicRepeatOperation || null;
+          previousOperationDisplay.textContent = data.basic.previous || "";
+          updateDisplay();
+        }
+        if (Array.isArray(data.history)) {
+          document.getElementById("historyList").innerHTML = '<p class="empty-message">Nenhum cálculo ainda.</p>';
+          data.history.slice(0,40).reverse().forEach(entry => {
+            if (typeof entry.expression === "string" && typeof entry.result === "string")
+              addHistory(entry.expression.slice(0,300).replaceAll(",", "."), entry.result.slice(0,300).replaceAll(",", "."));
+          });
+        }
+      } else if (name === "scientific") {
+        if (data.scientific && typeof data.scientific.scientificValue === "string") {
+          scientificExpression = data.scientific.scientificExpression || "";
+          scientificValue = data.scientific.scientificValue;
+          scientificJustCalculated = Boolean(data.scientific.scientificJustCalculated);
+          scientificRepeatOperation = data.scientific.scientificRepeatOperation || null;
+          scientificPrevious.textContent = data.scientific.previous || "";
+          updateScientificDisplay();
+        }
+      } else {
+        for (const id of outputs[name] || []) {
+          const el = document.getElementById(id);
+          if (el && typeof data.results?.[id] === "string") el.innerHTML = data.results[id];
+        }
+        if (name === "functions" && data.graph && typeof data.graph.expression === "string") {
+          currentFunctionGraph = data.graph;
+          requestAnimationFrame(refreshFunctionGraph);
+        }
+        if (name === "probability" && data.activeProbability) {
+          const tab = Array.from(probabilityTabs).find(el => el.dataset.probabilitySection === data.activeProbability);
+          if (tab) tab.click();
+        }
+      }
+    } finally { restoring = false; }
+  }
+  for (const name of modules) restore(name);
+  function resetModule(name) {
+    restoring = true;
+    try {
+      applyFields(defaultFields[name]);
+      if (name === "matrices") {
+        createMatrixInputs();
+        document.getElementById("scalarContainer").style.display = "none";
+      }
+      if (name === "combinatorics") updateCombinatoricsForm();
+      if (name === "functions") {
+        currentFunctionGraph = null;
+        const canvas = document.getElementById("functionGraph");
+        canvas.getContext("2d")?.clearRect(0,0,canvas.width,canvas.height);
+      }
+      if (name === "probability") document.querySelector('[data-probability-section="simple"]').click();
+      for (const id of outputs[name] || []) {
+        const el = document.getElementById(id);
+        if (el) el.replaceChildren();
+      }
+      document.getElementById({functions:"functionMessage",matrices:"matrixMessage",combinatorics:"combinatoricsMessage",probability:"probabilityMessage"}[name]).textContent = "";
+    } finally { restoring = false; }
+    snapshot(name);
+  }
+  document.querySelectorAll("[data-restore-module]").forEach(button => {
+    button.addEventListener("click", () => resetModule(button.dataset.restoreModule));
+  });
+  // O registro é feito após os manipuladores existentes, incluindo os cálculos.
+  document.addEventListener("input", event => {
+    const name = event.target.closest(".page")?.id;
+    if (modules.includes(name)) snapshot(name);
+  });
+  document.addEventListener("change", event => {
+    const name = event.target.closest(".page")?.id;
+    if (modules.includes(name)) queueMicrotask(() => snapshot(name));
+  });
+  document.addEventListener("click", event => {
+    const name = event.target.closest(".page")?.id;
+    if (modules.includes(name)) queueMicrotask(() => snapshot(name));
+  });
+  document.addEventListener("keyup", () => {
+    const name = document.querySelector(".page.active-page")?.id;
+    if (modules.includes(name)) snapshot(name);
+  });
+  window.addEventListener("pagehide", () => modules.forEach(snapshot));
+})();

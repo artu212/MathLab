@@ -950,3 +950,20 @@ nav.tabs > .tabs-buttons { display: flex; flex-wrap: wrap; justify-content: cent
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
 }
+
+
+/* Atualização 7: ações dos módulos e teclado básico */
+.calculator-keyboard .wide-equal-button { grid-column:span 2; }
+.module-header { gap:14px; flex-wrap:wrap; }
+.restore-button { white-space:nowrap; }
+@media (max-width:500px) { .restore-button { width:100%; } }
+
+/* Atualização 7.1 — teclas e ações independentes do gráfico */
+.keyboard-spacer { display:block; pointer-events:none; }
+.graph-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.secondary-panel-button { background:var(--surface); color:var(--text); border:1px solid var(--border); }
+@media (max-width:500px) { .graph-actions { width:100%; } .graph-actions .panel-button { flex:1; } }
+
+/* Atualização 7.2 — igualdade ocupa as duas colunas finais em ambos os teclados. */
+.calculator-keyboard .wide-equal-button,
+.scientific-number-keyboard .scientific-equal-button { grid-column: span 2; }

@@ -6,6 +6,7 @@
   <title>MathLab</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
   <meta name="theme-color" content="#e7e7e7">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="img/icon-192.png">
@@ -102,16 +103,18 @@
           <button class="calc-button" data-number="4">4</button>
           <button class="calc-button" data-number="5">5</button>
           <button class="calc-button" data-number="6">6</button>
-          <button class="calc-button action-button" data-action="sign">±</button>
-          <button class="calc-button operation-button" data-operation="-">−</button>
+          <span class="keyboard-spacer" aria-hidden="true"></span>
+          <button class="calc-button operation-button" data-operation="+">+</button>
 
           <button class="calc-button" data-number="1">1</button>
           <button class="calc-button" data-number="2">2</button>
           <button class="calc-button" data-number="3">3</button>
-          <button class="calc-button zero-button" data-number="0">0</button>
-          <button class="calc-button operation-button" data-operation="+">+</button>
+          <span class="keyboard-spacer" aria-hidden="true"></span>
+          <button class="calc-button operation-button" data-operation="-">−</button>
 
-          <button class="calc-button" data-number=".">.</button>
+          <button class="calc-button action-button" data-action="sign">±</button>
+          <button class="calc-button zero-button" data-number="0">0</button>
+          <button class="calc-button" data-number=",">,</button>
           <button class="calc-button equal-button wide-equal-button" data-action="calculate">=</button>
 
         </div>
@@ -196,16 +199,17 @@
           <button class="calc-button" data-scientific-number="5">5</button>
           <button class="calc-button" data-scientific-number="6">6</button>
           <button class="calc-button scientific-button" data-scientific="e">e</button>
-          <button class="calc-button scientific-button" data-scientific-operation="-">−</button>
+          <button class="calc-button scientific-button" data-scientific-operation="+">+</button>
 
           <button class="calc-button" data-scientific-number="1">1</button>
           <button class="calc-button" data-scientific-number="2">2</button>
           <button class="calc-button" data-scientific-number="3">3</button>
-          <button class="calc-button action-button" data-scientific-action="sign">±</button>
-          <button class="calc-button scientific-button" data-scientific-operation="+">+</button>
+          <span class="keyboard-spacer" aria-hidden="true"></span>
+          <button class="calc-button scientific-button" data-scientific-operation="-">−</button>
 
+          <button class="calc-button action-button" data-scientific-action="sign">±</button>
           <button class="calc-button" data-scientific-number="0">0</button>
-          <button class="calc-button" data-scientific-number=".">.</button>
+          <button class="calc-button" data-scientific-number=",">,</button>
           <button class="calc-button equal-button scientific-equal-button" data-scientific-action="calculate">=</button>
 
         </div>
@@ -241,6 +245,7 @@
           <h2>Funções f(x)</h2>
           <p>Calcule valores e gere uma tabela para uma função.</p>
         </div>
+        <button type="button" class="panel-button restore-button" data-restore-module="functions">Restaurar padrões</button>
       </div>
 
       <div id="functionMessage" class="module-message"></div>
@@ -285,7 +290,10 @@
             <h3 id="graphTitle">Gráfico da função</h3>
             <p>Visualização do intervalo informado, com amostragem independente do passo da tabela.</p>
           </div>
-          <button type="button" id="redrawFunctionGraph" class="panel-button">Redesenhar</button>
+          <div class="graph-actions">
+            <button type="button" id="drawFunctionGraph" class="panel-button">Desenhar gráfico</button>
+            <button type="button" id="clearFunctionGraph" class="panel-button secondary-panel-button">Limpar gráfico</button>
+          </div>
         </div>
         <div class="graph-container">
           <canvas id="functionGraph" role="img" aria-label="Gráfico cartesiano da função informada">
@@ -293,7 +301,7 @@
           </canvas>
         </div>
         <p id="functionGraphStatus" class="graph-status" role="status">
-          Calcule uma função para exibir seu gráfico.
+          Clique em "Desenhar gráfico" para visualizar a função.
         </p>
       </section>
 
@@ -315,6 +323,7 @@
           <h2>Matrizes</h2>
           <p>Operações com matrizes quadradas e retangulares.</p>
         </div>
+        <button type="button" class="panel-button restore-button" data-restore-module="matrices">Restaurar padrões</button>
       </div>
 
       <div id="matrixMessage" class="module-message"></div>
@@ -407,6 +416,7 @@
           <h2>Análise Combinatória</h2>
           <p>Fatorial, combinação, permutação e arranjo.</p>
         </div>
+        <button type="button" class="panel-button restore-button" data-restore-module="combinatorics">Restaurar padrões</button>
       </div>
 
       <div id="combinatoricsMessage" class="module-message"></div>
@@ -508,6 +518,7 @@
           <h2>Probabilidade</h2>
           <p>Cálculos fundamentais e simulações aleatórias.</p>
         </div>
+        <button type="button" class="panel-button restore-button" data-restore-module="probability">Restaurar padrões</button>
       </div>
 
       <div class="probability-tabs">
@@ -590,3 +601,4 @@
 
 </body>
 </html>
+
