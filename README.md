@@ -25,7 +25,11 @@ O módulo de **Probabilidade** foi definido como diferencial do projeto.
 - Interface responsiva, com navegação por abas.
 - Suporte a atalhos de teclado nas calculadoras.
 - Reutilização de resultados do histórico e repetição de operações com `=`.
-- Armazenamento local de preferências e de recursos de histórico.
+- Persistência local de campos, resultados e históricos dos seis módulos após recarregar a página.
+- Botões de restauração de padrões em Funções, Matrizes, Combinatória e Probabilidade.
+- Separador decimal com vírgula nas calculadoras Básica e Científica.
+- Controles separados para gerar tabela, desenhar e limpar gráficos em Funções.
+- Prevenção de zoom por duplo toque nos botões em navegadores móveis compatíveis (`touch-action: manipulation`).
 - Suporte a **Progressive Web App (PWA)**, com instalação e acesso offline após o armazenamento inicial dos arquivos.
 
 ## Tecnologias
@@ -72,11 +76,16 @@ MathLab/
 └── service-worker.js
 ```
 
+## Atualizações recentes (23/10/2026)
+
+- **7.3:** persistência entre recargas, ajustes nos teclados, vírgula decimal, restauração de padrões e controles independentes do gráfico. Alterações submetidas e testes internos relatados como aprovados. Commit confirmado: `d88d40c`.
+- **7.4:** correção do zoom indesejado por duplo toque em botões no celular, com `touch-action: manipulation`. Funcionamento confirmado em teste no celular. Commit confirmado: `d21260d`.
+
 ## Estado do projeto e testes
 
 Os seis módulos estão implementados e foram verificados internamente, inclusive na versão hospedada. **A bateria oficial de testes da equipe e seu registro de evidências ainda estão pendentes.** As verificações de desenvolvimento não são apresentadas como resultados oficiais.
 
-Consulte [`docs/STATUS.md`](docs/STATUS.md) para o andamento da entrega e [`MathLab - HISTORICO DE DESENVOLVIMENTO.md`](docs/MathLab%20-%20HISTORICO%20DE%20DESENVOLVIMENTO.md) para um resumo das etapas do projeto.
+Consulte [`STATUS.md`](STATUS.md) para o andamento da entrega e [`MathLab - HISTORICO DE DESENVOLVIMENTO.md`](MathLab%20-%20HISTORICO%20DE%20DESENVOLVIMENTO.md) para um resumo das etapas do projeto.
 
 ## Equipe e organização
 
